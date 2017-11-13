@@ -9,11 +9,11 @@
 #include <netinet/in.h>
 #include <netdb.h>
 
+
 commPi::commPi()
 {
+
     connected = false;
-
-
 }
 
 bool commPi::getCommStateConnected() {
@@ -26,14 +26,9 @@ bool commPi::connectTo( const char *target )
     struct sockaddr_in serv_addr;
     struct hostent *server;
 
-//#define CONNECTION_PORT         5555            // Mostly arbitrary
-//#define CONNECTION_LISTENER     "workpi.local"     // Default partner
-
-//    int connectionPort = 5555;
-//    char connectionTarget[256];
     connected = false;
-
     portno = 5555;
+
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0) {
         fprintf(stderr,"ERROR opening socket\n");
@@ -61,29 +56,30 @@ bool commPi::connectTo( const char *target )
 
 char *commPi::sendMessage( const char *message )
 {
-    char buffer[256];
+    char *buff;
     long n = 0;
 
     if ( ! connected ) {
         fprintf(stderr,"ERROR sending message while not connected\n");
-        return "";
+        return 0;
     }
-    bzero(buffer,256);
 
     n = write(sockfd,message,strlen(message));
     if (n < 0) {
         fprintf(stderr,"ERROR writing to socket\n");
         connected = false;
-        return "";
+        return 0;
     }
-    bzero(buffer,256);
-    n = read(sockfd,buffer,255);
+
+    buff = (char *)malloc( 256 );
+    bzero(buff,256);
+    n = read(sockfd,buff,255);
     if (n < 0) {
         fprintf(stderr,"ERROR reading from socket\n");
         connected = false;
-        return "";
+        return 0;
     }
-    return buffer;
+    return buff;
 }
 
 bool commPi::detachFrom()

@@ -49,13 +49,17 @@ MainWindow::~MainWindow()
 void MainWindow::slotConnectClicked(bool checked) {
 
     if (checked) {
-        const char *targetAddr = "Saturn.local";
+        ui->connectButton->setText("Connecting");
+        QString targetString = ui->talkAddress->text();
+        const char *targetAddr = "Saturn.local"; // targetString.toUtf8().constData();
+        fprintf(stderr,"Target address: %s\n", targetAddr);
         connected = piPtr->connectTo( targetAddr );
         if ( connected ) {
             ui->connectButton->setText("Disconnect");
             ui->talkBox->show();
-//            ui->connectButton->setChecked(false);
         } else {
+            exit( 0 );
+            ui->connectButton->setText("Connect");
             ui->connectButton->setChecked(false);
         }
     } else {
