@@ -107,6 +107,19 @@
        <string>Stop</string>
       </property>
      </widget>
+     <widget class="QSlider" name="horizontalSlider">
+      <property name="geometry">
+       <rect>
+        <x>19</x>
+        <y>260</y>
+        <width>341</width>
+        <height>22</height>
+       </rect>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QScrollArea" name="connectBox">
@@ -214,7 +227,7 @@
      <x>0</x>
      <y>0</y>
      <width>400</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuPiWorld">
@@ -242,7 +255,7 @@
    <property name="text">
     <string>Comm Test</string>
    </property>
-   <property name="shortcutVisibleInContextMenu" stdset="0">
+   <property name="shortcutVisibleInContextMenu">
     <bool>false</bool>
    </property>
   </action>
@@ -250,7 +263,7 @@
    <property name="text">
     <string>Motor Test</string>
    </property>
-   <property name="shortcutVisibleInContextMenu" stdset="0">
+   <property name="shortcutVisibleInContextMenu">
     <bool>false</bool>
    </property>
   </action>

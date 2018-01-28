@@ -4,8 +4,7 @@
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
-    ui(new Ui::MainWindow)
-{
+    ui(new Ui::MainWindow) {
     ui->setupUi(this);
     setFixedSize(400, 400);
 
@@ -17,8 +16,7 @@ MainWindow::MainWindow(QWidget *parent) :
     buttonSetup();
 }
 
-void MainWindow::menuSetup()
-{
+void MainWindow::menuSetup() {
 
     commMode = false;
     motorMode = false;
@@ -26,8 +24,7 @@ void MainWindow::menuSetup()
     connect(ui->MotorTest, SIGNAL (triggered()), this, SLOT (slotMotorMenu()));
 }
 
-void MainWindow::buttonSetup()
-{
+void MainWindow::buttonSetup() {
 
     ui->connectButton->setCheckable(true);
     ui->okButton->setCheckable(true);
@@ -42,8 +39,7 @@ void MainWindow::buttonSetup()
     connect(ui->stopButton, SIGNAL (clicked(bool)), this, SLOT (slotStopClicked(bool)));
 }
 
-void MainWindow::connectSetup()
-{
+void MainWindow::connectSetup() {
 
     commMode = true;
     motorMode = false;
@@ -61,8 +57,7 @@ void MainWindow::connectSetup()
     ui->connectButton->setChecked(connected);
 }
 
-void MainWindow::motorSetup()
-{
+void MainWindow::motorSetup() {
 
     commMode = false;
     motorMode = true;
@@ -72,12 +67,16 @@ void MainWindow::motorSetup()
     motor->setupForMotor();
     ui->connectButton->setText("Setup IO");
     ui->talkBox->hide();
+
+    ui->horizontalSlider->setRange( 0, 100 );
+    ui->horizontalSlider->setValue( 50 );
 }
 
-MainWindow::~MainWindow()
-{
+MainWindow::~MainWindow() {
     delete ui;
 }
+
+//MARK: Menu actions
 
 void MainWindow::slotCommMenu() {
 
@@ -107,9 +106,11 @@ void MainWindow::slotMotorMenu() {
 
 }
 
+// MARK: Button actions
+
 void MainWindow::slotConnectClicked(bool checked) {
 
-    if (commMode ) {
+    if (commMode ) {                            // Connect to enable communication test
         if (checked) {
             ui->connectButton->setText("Connecting");
             QString targetString = ui->talkAddress->text();
@@ -135,7 +136,7 @@ void MainWindow::slotConnectClicked(bool checked) {
             ui->talkBox->hide();
         }
     } else {
-        if (motorMode) {
+        if (motorMode) {                        // Setup for motor test
             if (checked) {
                 ui->connectButton->setText("Setting Up");
                 connected = motor->activated;
