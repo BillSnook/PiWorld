@@ -1,9 +1,9 @@
 #ifndef COMMPI_H
 #define COMMPI_H
 
-//#include <QObject>
+#include <QObject>
 
-class commPi //: public QObject
+class commPi // : public QObject
 {
 
 public:

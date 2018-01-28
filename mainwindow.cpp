@@ -14,16 +14,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->connectBox->hide();
     ui->talkBox->hide();
 
-    ui->talkAddress->setText( "develop31" ); // Initial setting
     buttonSetup();
-    connectSetup();
 }
 
 void MainWindow::menuSetup()
 {
 
-    connect(ui->CommTest, SIGNAL (triggered()), this, SLOT (slotCommClicked()));
-    connect(ui->MotorTest, SIGNAL (triggered()), this, SLOT (slotMotorClicked()));
+    commMode = false;
+    motorMode = false;
+    connect(ui->CommTest, SIGNAL (triggered()), this, SLOT (slotCommMenu()));
+    connect(ui->MotorTest, SIGNAL (triggered()), this, SLOT (slotMotorMenu()));
 }
 
 void MainWindow::buttonSetup()
@@ -45,6 +45,10 @@ void MainWindow::buttonSetup()
 void MainWindow::connectSetup()
 {
 
+    commMode = true;
+    motorMode = false;
+
+    ui->talkAddress->setText( "develop31" ); // Initial setting
     piPtr = new commPi();
     connected = piPtr->getCommStateConnected();
     if (connected) {
@@ -57,81 +61,165 @@ void MainWindow::connectSetup()
     ui->connectButton->setChecked(connected);
 }
 
+void MainWindow::motorSetup()
+{
+
+    commMode = false;
+    motorMode = true;
+
+    ui->talkAddress->setText( "Test Setup" ); // Initial setting
+    motor = new Motor();
+    motor->setupForMotor();
+    ui->connectButton->setText("Setup IO");
+    ui->talkBox->hide();
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
 }
 
-void MainWindow::slotCommClicked() {
-
-    ui->connectBox->show();
+void MainWindow::slotCommMenu() {
 
     buttonSetup();
     connectSetup();
+
+    ui->connectBox->show();
+
+    ui->okButton->setText("OK");
+    ui->helloButton->setText("Hello");
+    ui->blinkButton->setText("Blink");
+    ui->stopButton->setText("Stop");
+
 }
 
-void MainWindow::slotMotorClicked() {
+void MainWindow::slotMotorMenu() {
 
-    ui->connectBox->hide();
-    ui->talkBox->hide();
+    motorSetup();
+
+    ui->connectButton->setText("Setup IO");
+    ui->connectBox->show();
+
+    ui->okButton->setText("M1");
+    ui->helloButton->setText("M2");
+    ui->blinkButton->setText("M3");
+    ui->stopButton->setText("M4");
+
 }
 
 void MainWindow::slotConnectClicked(bool checked) {
 
-    if (checked) {
-        ui->connectButton->setText("Connecting");
-        QString targetString = ui->talkAddress->text();
-        const char *targetAddr = targetString.toUtf8().constData();
-        size_t len = targetString.length();
-        char *tAddr = (char *)malloc( len + 7 );
-        memcpy( tAddr, targetAddr, len );
-        tAddr[len] = 0;
-        strcat( tAddr, ".local" );
-        fprintf(stderr,"Target address: %s\n", tAddr);
-        connected = piPtr->connectTo( tAddr );
-        free( tAddr );
-        if ( connected ) {
-            ui->connectButton->setText("Disconnect");
-            ui->talkBox->show();
+    if (commMode ) {
+        if (checked) {
+            ui->connectButton->setText("Connecting");
+            QString targetString = ui->talkAddress->text();
+            const char *targetAddr = targetString.toUtf8().constData();
+            size_t len = targetString.length();
+            char *tAddr = (char *)malloc( len + 7 );
+            memcpy( tAddr, targetAddr, len );
+            tAddr[len] = 0;
+            strcat( tAddr, ".local" );
+            fprintf(stderr,"Target address: %s\n", tAddr);
+            connected = piPtr->connectTo( tAddr );
+            free( tAddr );
+            if ( connected ) {
+                ui->connectButton->setText("Disconnect");
+                ui->talkBox->show();
+            } else {
+                ui->connectButton->setText("Connect");
+            }
+            ui->connectButton->setChecked(!connected);
         } else {
+            connected = piPtr->detachFrom();
             ui->connectButton->setText("Connect");
-            ui->connectButton->setChecked(false);
+            ui->talkBox->hide();
         }
     } else {
-        connected = piPtr->detachFrom();
-        ui->connectButton->setText("Connect");
-        ui->talkBox->hide();
+        if (motorMode) {
+            if (checked) {
+                ui->connectButton->setText("Setting Up");
+                connected = motor->activated;
+                if ( connected ) {
+                    ui->connectButton->setText("IO Ready");
+                    ui->talkBox->show();
+                } else {
+                    ui->connectButton->setText("Not Ready");
+                    ui->talkBox->hide();
+                }
+                ui->connectButton->setChecked(connected);
+            } else {
+                connected = motor->resetForMotor();
+                ui->connectButton->setText("Setup IO");
+                ui->talkBox->hide();
+            }
+        }
     }
 }
 
 void MainWindow::slotOKClicked(bool checked) {
 
-    ui->okButton->setChecked(!checked);
-    ui->messageTextLine->setText("ok");
-    char *resp = piPtr->sendMessage( "ok\n" );
-    ui->responseDisplay->setPlainText(resp);
+    if (commMode ) {
+        ui->okButton->setChecked(!checked);
+        ui->messageTextLine->setText("ok");
+        char *resp = piPtr->sendMessage( "ok\n" );
+        ui->responseDisplay->setPlainText(resp);
+    }
+    if (motorMode) {
+        if ( checked ) {
+            motor->onPin(L1);
+        } else {
+            motor->offPin(L1);
+        }
+    }
 }
 
 void MainWindow::slotHelloClicked(bool checked) {
 
-    ui->helloButton->setChecked(!checked);
-    ui->messageTextLine->setText("hello");
-    char *resp = piPtr->sendMessage( "hello\n" );
-    ui->responseDisplay->setPlainText(resp);
+    if (commMode ) {
+        ui->helloButton->setChecked(!checked);
+        ui->messageTextLine->setText("hello");
+        char *resp = piPtr->sendMessage( "hello\n" );
+        ui->responseDisplay->setPlainText(resp);
+    }
+    if (motorMode) {
+        if ( checked ) {
+            motor->onPin(L2);
+        } else {
+            motor->offPin(L2);
+        }
+    }
 }
 
 void MainWindow::slotBlinkClicked(bool checked) {
 
-    ui->blinkButton->setChecked(!checked);
-    ui->messageTextLine->setText("blink");
-    char *resp = piPtr->sendMessage( "blink\n" );
-    ui->responseDisplay->setPlainText(resp);
+    if (commMode ) {
+        ui->blinkButton->setChecked(!checked);
+        ui->messageTextLine->setText("blink");
+        char *resp = piPtr->sendMessage( "blink\n" );
+        ui->responseDisplay->setPlainText(resp);
+    }
+    if (motorMode) {
+        if ( checked ) {
+            motor->onPin(L3);
+        } else {
+            motor->offPin(L3);
+        }
+    }
 }
 
 void MainWindow::slotStopClicked(bool checked) {
 
-    ui->stopButton->setChecked(!checked);
-    ui->messageTextLine->setText("blinkstop");
-    char *resp = piPtr->sendMessage( "blinkstop\n" );
-    ui->responseDisplay->setPlainText(resp);
+    if (commMode ) {
+        ui->stopButton->setChecked(!checked);
+        ui->messageTextLine->setText("blinkstop");
+        char *resp = piPtr->sendMessage( "blinkstop\n" );
+        ui->responseDisplay->setPlainText(resp);
+    }
+    if (motorMode) {
+        if ( checked ) {
+            motor->onPin(L4);
+        } else {
+            motor->offPin(L4);
+        }
+    }
 }

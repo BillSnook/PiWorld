@@ -4,6 +4,7 @@
 #include <QMainWindow>
 
 #include "commpi.h"
+#include "motor.h"
 
 
 namespace Ui {
@@ -21,12 +22,16 @@ public:
 private:
     Ui::MainWindow *ui;
     commPi *piPtr;
+    Motor *motor;
 
     bool connected;
+    bool commMode;
+    bool motorMode;
 
     void menuSetup();
     void buttonSetup();
     void connectSetup();
+    void motorSetup();
 
 private slots:
     void slotConnectClicked(bool checked);
@@ -36,8 +41,8 @@ private slots:
     void slotBlinkClicked(bool checked);
     void slotStopClicked(bool checked);
 
-    void slotCommClicked();
-    void slotMotorClicked();
+    void slotCommMenu();
+    void slotMotorMenu();
 
 };
 
