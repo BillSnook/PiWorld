@@ -22,8 +22,8 @@ MainWindow::MainWindow(QWidget *parent) :
 void MainWindow::menuSetup()
 {
 
-    connect(ui->CommTest, SIGNAL (triggered), this, SLOT (slotCommClicked(bool)));
-    connect(ui->MotorTest, SIGNAL (triggered), this, SLOT (slotMotorClicked(bool)));
+    connect(ui->CommTest, SIGNAL (triggered()), this, SLOT (slotCommClicked()));
+    connect(ui->MotorTest, SIGNAL (triggered()), this, SLOT (slotMotorClicked()));
 }
 
 void MainWindow::buttonSetup()
