@@ -2,6 +2,9 @@
 #include "ui_mainwindow.h"
 
 
+//#define USE_MOTOR
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
@@ -63,14 +66,25 @@ void MainWindow::motorSetup() {
     motorMode = true;
 
     ui->talkAddress->setText( "Test Setup" ); // Initial setting
+#ifdef USE_MOTOR
     motor = new Motor();
     motor->setupForMotor();
+#endif  // USE_MOTOR
     ui->connectButton->setText("Setup IO");
     ui->talkBox->hide();
 
     ui->horizontalSlider->setRange( 0, 100 );
-    ui->horizontalSlider->setValue( 50 );
+    connect(ui->horizontalSlider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
 }
+
+void MainWindow::sliderChanged(int newValue) {
+
+    ui->messageTextLine->setText( QString::number(newValue) );
+}
+
+//ui->messageTextLine->setText("ok");
+//ui->responseDisplay->setPlainText(resp);
+
 
 MainWindow::~MainWindow() {
     delete ui;
@@ -139,7 +153,11 @@ void MainWindow::slotConnectClicked(bool checked) {
         if (motorMode) {                        // Setup for motor test
             if (checked) {
                 ui->connectButton->setText("Setting Up");
+#ifdef USE_MOTOR
                 connected = motor->activated;
+#else
+                connected = true;
+#endif  // USE_MOTOR
                 if ( connected ) {
                     ui->connectButton->setText("IO Ready");
                     ui->talkBox->show();
@@ -149,7 +167,9 @@ void MainWindow::slotConnectClicked(bool checked) {
                 }
                 ui->connectButton->setChecked(connected);
             } else {
+#ifdef USE_MOTOR
                 connected = motor->resetForMotor();
+#endif  // USE_MOTOR
                 ui->connectButton->setText("Setup IO");
                 ui->talkBox->hide();
             }
@@ -166,11 +186,14 @@ void MainWindow::slotOKClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
+        ui->horizontalSlider->setValue( 0 );
+#ifdef USE_MOTOR
         if ( checked ) {
             motor->onPin(L1);
         } else {
             motor->offPin(L1);
         }
+#endif  // USE_MOTOR
     }
 }
 
@@ -183,11 +206,14 @@ void MainWindow::slotHelloClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
+        ui->horizontalSlider->setValue( 0 );
+#ifdef USE_MOTOR
         if ( checked ) {
             motor->onPin(L2);
         } else {
             motor->offPin(L2);
         }
+#endif  // USE_MOTOR
     }
 }
 
@@ -200,11 +226,14 @@ void MainWindow::slotBlinkClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
+        ui->horizontalSlider->setValue( 0 );
+#ifdef USE_MOTOR
         if ( checked ) {
             motor->onPin(L3);
         } else {
             motor->offPin(L3);
         }
+#endif  // USE_MOTOR
     }
 }
 
@@ -217,10 +246,13 @@ void MainWindow::slotStopClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
+        ui->horizontalSlider->setValue( 0 );
+#ifdef USE_MOTOR
         if ( checked ) {
             motor->onPin(L4);
         } else {
             motor->offPin(L4);
         }
+#endif  // USE_MOTOR
     }
 }

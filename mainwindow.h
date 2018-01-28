@@ -34,6 +34,9 @@ private:
     void motorSetup();
 
 private slots:
+    void slotCommMenu();
+    void slotMotorMenu();
+
     void slotConnectClicked(bool checked);
 
     void slotOKClicked(bool checked);
@@ -41,8 +44,7 @@ private slots:
     void slotBlinkClicked(bool checked);
     void slotStopClicked(bool checked);
 
-    void slotCommMenu();
-    void slotMotorMenu();
+    void sliderChanged(int newValue);
 
 };
 
