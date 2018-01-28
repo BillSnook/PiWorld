@@ -7,43 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>404</height>
+    <height>499</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>PiWorld</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QPushButton" name="connectButton">
-    <property name="geometry">
-     <rect>
-      <x>270</x>
-      <y>20</y>
-      <width>113</width>
-      <height>32</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Connect</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="talkAddress">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>251</width>
-      <height>31</height>
-     </rect>
-    </property>
-   </widget>
    <widget class="QScrollArea" name="talkBox">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>60</y>
       <width>381</width>
-      <height>291</height>
+      <height>371</height>
      </rect>
     </property>
     <property name="widgetResizable">
@@ -55,7 +32,7 @@
        <x>0</x>
        <y>0</y>
        <width>379</width>
-       <height>289</height>
+       <height>369</height>
       </rect>
      </property>
      <widget class="QLineEdit" name="messageTextLine">
@@ -132,6 +109,52 @@
      </widget>
     </widget>
    </widget>
+   <widget class="QScrollArea" name="connectBox">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>381</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="widgetResizable">
+     <bool>true</bool>
+    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>379</width>
+       <height>39</height>
+      </rect>
+     </property>
+     <widget class="QLineEdit" name="talkAddress">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>10</y>
+        <width>191</width>
+        <height>21</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="connectButton">
+      <property name="geometry">
+       <rect>
+        <x>210</x>
+        <y>1</y>
+        <width>151</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Connect</string>
+      </property>
+     </widget>
+    </widget>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
@@ -146,6 +169,8 @@
     <property name="title">
      <string>PiWorld</string>
     </property>
+    <addaction name="CommTest"/>
+    <addaction name="MotorTest"/>
    </widget>
    <addaction name="menuPiWorld"/>
   </widget>
@@ -158,6 +183,31 @@
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="CommTest">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Comm Test</string>
+   </property>
+   <property name="shortcut">
+    <string>Meta+C</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="MotorTest">
+   <property name="text">
+    <string>Motor Test</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+   <property name="shortcutVisibleInContextMenu">
+    <bool>true</bool>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>

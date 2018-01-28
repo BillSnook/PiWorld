@@ -23,7 +23,10 @@ private:
     commPi *piPtr;
 
     bool connected;
+
+    void menuSetup();
     void buttonSetup();
+    void connectSetup();
 
 private slots:
     void slotConnectClicked(bool checked);
@@ -32,6 +35,9 @@ private slots:
     void slotHelloClicked(bool checked);
     void slotBlinkClicked(bool checked);
     void slotStopClicked(bool checked);
+
+    void slotCommClicked();
+    void slotMotorClicked();
 
 };
 

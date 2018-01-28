@@ -7,22 +7,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
     setFixedSize(400, 400);
-    ui->talkAddress->setText( "zerowpi2" ); // Initial setting
 
+    menuSetup();
+
+    ui->connectBox->hide();
+    ui->talkBox->hide();
+
+    ui->talkAddress->setText( "develop31" ); // Initial setting
     buttonSetup();
+    connectSetup();
+}
 
-    piPtr = new commPi();
-    connected = piPtr->getCommStateConnected();
-    if (connected) {
-        ui->connectButton->setText("Disconnect");
-        ui->talkBox->show();
-    } else {
-        ui->connectButton->setText("Connect");
-        ui->talkBox->hide();
-    }
-    ui->connectButton->setChecked(connected);
+void MainWindow::menuSetup()
+{
+
+    connect(ui->CommTest, SIGNAL (triggered), this, SLOT (slotCommClicked(bool)));
+    connect(ui->MotorTest, SIGNAL (triggered), this, SLOT (slotMotorClicked(bool)));
 }
 
 void MainWindow::buttonSetup()
@@ -41,9 +42,38 @@ void MainWindow::buttonSetup()
     connect(ui->stopButton, SIGNAL (clicked(bool)), this, SLOT (slotStopClicked(bool)));
 }
 
+void MainWindow::connectSetup()
+{
+
+    piPtr = new commPi();
+    connected = piPtr->getCommStateConnected();
+    if (connected) {
+        ui->connectButton->setText("Disconnect");
+        ui->talkBox->show();
+    } else {
+        ui->connectButton->setText("Connect");
+        ui->talkBox->hide();
+    }
+    ui->connectButton->setChecked(connected);
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::slotCommClicked() {
+
+    ui->connectBox->show();
+
+    buttonSetup();
+    connectSetup();
+}
+
+void MainWindow::slotMotorClicked() {
+
+    ui->connectBox->hide();
+    ui->talkBox->hide();
 }
 
 void MainWindow::slotConnectClicked(bool checked) {

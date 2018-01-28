@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = PiWorld
+TARGET = MotorTester
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -24,10 +24,10 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp \
-    commpi.cpp
+            mainwindow.cpp \
+            commpi.cpp
 
 HEADERS  += mainwindow.h \
-    commpi.h
+            commpi.h
 
 FORMS    += mainwindow.ui
