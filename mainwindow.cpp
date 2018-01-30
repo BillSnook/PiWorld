@@ -6,7 +6,7 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow) {
     ui->setupUi(this);
-    setFixedSize(400, 400);
+    setFixedSize(600, 500);
 
     menuSetup();
 
@@ -33,18 +33,24 @@ void MainWindow::buttonSetup() {
     ui->helloButton->setCheckable(true);
     ui->blinkButton->setCheckable(true);
     ui->stopButton->setCheckable(true);
+    ui->okButton_2->setCheckable(true);
+    ui->helloButton_2->setCheckable(true);
+    ui->blinkButton_2->setCheckable(true);
+    ui->stopButton_2->setCheckable(true);
 
     connect(ui->connectButton, SIGNAL (clicked(bool)), this, SLOT (slotConnectClicked(bool)));
     connect(ui->okButton, SIGNAL (clicked(bool)), this, SLOT (slotOKClicked(bool)));
     connect(ui->helloButton, SIGNAL (clicked(bool)), this, SLOT (slotHelloClicked(bool)));
     connect(ui->blinkButton, SIGNAL (clicked(bool)), this, SLOT (slotBlinkClicked(bool)));
     connect(ui->stopButton, SIGNAL (clicked(bool)), this, SLOT (slotStopClicked(bool)));
+
+    connect(ui->okButton_2, SIGNAL (clicked(bool)), this, SLOT (slotOKClicked(bool)));
+    connect(ui->helloButton_2, SIGNAL (clicked(bool)), this, SLOT (slotHelloClicked(bool)));
+    connect(ui->blinkButton_2, SIGNAL (clicked(bool)), this, SLOT (slotBlinkClicked(bool)));
+    connect(ui->stopButton_2, SIGNAL (clicked(bool)), this, SLOT (slotStopClicked(bool)));
 }
 
 void MainWindow::connectSetup() {
-
-    commMode = true;
-    motorMode = false;
 
     ui->talkAddress->setText( "develop31" ); // Initial setting
     piPtr = new commPi();
@@ -59,19 +65,23 @@ void MainWindow::connectSetup() {
     ui->connectButton->setChecked(connected);
 }
 
-void MainWindow::motorSetup() {
+void MainWindow::sliderSetup() {
 
-    commMode = false;
-    motorMode = true;
+    ui->m1Slider->setRange( 0, 100 );
+    ui->m1Slider->show();
+    connect(ui->m1Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
 
-    ui->talkAddress->setText( "Test Setup" ); // Initial setting
-    motor = new Motor();
-    motor->setupForMotor();
-    ui->connectButton->setText("Setup IO");
-    ui->talkBox->hide();
+    ui->m2Slider->setRange( 0, 100 );
+    ui->m2Slider->show();
+    connect(ui->m2Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
 
-    ui->horizontalSlider->setRange( 0, 100 );
-    connect(ui->horizontalSlider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
+    ui->m3Slider->setRange( 0, 100 );
+    ui->m3Slider->show();
+    connect(ui->m3Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
+
+    ui->m4Slider->setRange( 0, 100 );
+    ui->m4Slider->show();
+    connect(ui->m4Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
 }
 
 void MainWindow::sliderChanged(int newValue) {
@@ -91,7 +101,9 @@ MainWindow::~MainWindow() {
 
 void MainWindow::slotCommMenu() {
 
-    buttonSetup();
+    commMode = true;
+    motorMode = false;
+
     connectSetup();
 
     ui->connectBox->show();
@@ -100,21 +112,40 @@ void MainWindow::slotCommMenu() {
     ui->helloButton->setText("Hello");
     ui->blinkButton->setText("Blink");
     ui->stopButton->setText("Stop");
+    ui->okButton_2->hide();
+    ui->helloButton_2->hide();
+    ui->blinkButton_2->hide();
+    ui->stopButton_2->hide();
 
+    ui->m1Slider->hide();
+    ui->m2Slider->hide();
+    ui->m3Slider->hide();
+    ui->m4Slider->hide();
 }
 
 void MainWindow::slotMotorMenu() {
 
-    motorSetup();
+    commMode = false;
+    motorMode = true;
 
     ui->connectButton->setText("Setup IO");
     ui->connectBox->show();
 
-    ui->okButton->setText("M1");
-    ui->helloButton->setText("M2");
-    ui->blinkButton->setText("M3");
-    ui->stopButton->setText("M4");
+    ui->okButton->setText("M1 Forward");
+    ui->helloButton->setText("M2 Forward");
+    ui->blinkButton->setText("M3 Forward");
+    ui->stopButton->setText("M4 Forward");
+    ui->okButton_2->setText("M1 Reverse");
+    ui->helloButton_2->setText("M2 Reverse");
+    ui->blinkButton_2->setText("M3 Reverse");
+    ui->stopButton_2->setText("M4 Reverse");
 
+    ui->okButton_2->show();
+    ui->helloButton_2->show();
+    ui->blinkButton_2->show();
+    ui->stopButton_2->show();
+
+    sliderSetup();
 }
 
 // MARK: Button actions
@@ -132,15 +163,16 @@ void MainWindow::slotConnectClicked(bool checked) {
             tAddr[len] = 0;
             strcat( tAddr, ".local" );
             fprintf(stderr,"Target address: %s\n", tAddr);
-            connected = piPtr->connectTo( tAddr );
+            connected = true; // piPtr->connectTo( tAddr );
             free( tAddr );
             if ( connected ) {
                 ui->connectButton->setText("Disconnect");
                 ui->talkBox->show();
             } else {
                 ui->connectButton->setText("Connect");
+                ui->talkBox->hide();
             }
-            ui->connectButton->setChecked(!connected);
+            ui->connectButton->setChecked(connected);
         } else {
             connected = piPtr->detachFrom();
             ui->connectButton->setText("Connect");
@@ -149,21 +181,28 @@ void MainWindow::slotConnectClicked(bool checked) {
     } else {
         if (motorMode) {                        // Setup for motor test
             if (checked) {
+                if ( nullptr == motor ) {
+                    motor = new Motor();
+                }
+                connected = motor->setupForMotor();
                 ui->connectButton->setText("Setting Up");
-                connected = motor->activated;
+                ui->talkAddress->setText( "Test Setup" ); // ?
                 if ( connected ) {
                     ui->connectButton->setText("IO Ready");
                     ui->talkBox->show();
                 } else {
                     ui->connectButton->setText("Not Ready");
                     ui->talkBox->hide();
+                    ui->connectButton->setChecked(false);
                 }
-                ui->connectButton->setChecked(connected);
             } else {
+                ui->talkAddress->setText( "" );
                 connected = motor->resetForMotor();
                 ui->connectButton->setText("Setup IO");
                 ui->talkBox->hide();
             }
+        } else {
+            ui->talkAddress->setText( "In slotConnectClicked but no mode is set" );
         }
     }
 }
@@ -177,7 +216,7 @@ void MainWindow::slotOKClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        ui->horizontalSlider->setValue( 0 );
+        ui->m1Slider->setValue( 0 );
         if ( checked ) {
             motor->onPin(L1);
         } else {
@@ -195,7 +234,7 @@ void MainWindow::slotHelloClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        ui->horizontalSlider->setValue( 0 );
+        ui->m2Slider->setValue( 0 );
         if ( checked ) {
             motor->onPin(L2);
         } else {
@@ -213,7 +252,7 @@ void MainWindow::slotBlinkClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        ui->horizontalSlider->setValue( 0 );
+        ui->m3Slider->setValue( 0 );
         if ( checked ) {
             motor->onPin(L3);
         } else {
@@ -231,7 +270,7 @@ void MainWindow::slotStopClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        ui->horizontalSlider->setValue( 0 );
+        ui->m4Slider->setValue( 0 );
         if ( checked ) {
             motor->onPin(L4);
         } else {

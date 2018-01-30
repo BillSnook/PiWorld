@@ -31,7 +31,7 @@ private:
     void menuSetup();
     void buttonSetup();
     void connectSetup();
-    void motorSetup();
+    void sliderSetup();
 
 private slots:
     void slotCommMenu();
