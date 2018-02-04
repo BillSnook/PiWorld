@@ -24,4 +24,4 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
-LIBS    = -L/usr/lib -lwiringPi
+LIBS    = -lwiringPi
