@@ -44,10 +44,10 @@ void MainWindow::buttonSetup() {
     connect(ui->blinkButton, SIGNAL (clicked(bool)), this, SLOT (slotBlinkClicked(bool)));
     connect(ui->stopButton, SIGNAL (clicked(bool)), this, SLOT (slotStopClicked(bool)));
 
-    connect(ui->okButton_2, SIGNAL (clicked(bool)), this, SLOT (slotOKClicked(bool)));
-    connect(ui->helloButton_2, SIGNAL (clicked(bool)), this, SLOT (slotHelloClicked(bool)));
-    connect(ui->blinkButton_2, SIGNAL (clicked(bool)), this, SLOT (slotBlinkClicked(bool)));
-    connect(ui->stopButton_2, SIGNAL (clicked(bool)), this, SLOT (slotStopClicked(bool)));
+    connect(ui->okButton_2, SIGNAL (clicked(bool)), this, SLOT (m1rv(bool)));
+    connect(ui->helloButton_2, SIGNAL (clicked(bool)), this, SLOT (m2rv(bool)));
+    connect(ui->blinkButton_2, SIGNAL (clicked(bool)), this, SLOT (m3rv(bool)));
+    connect(ui->stopButton_2, SIGNAL (clicked(bool)), this, SLOT (m4rv(bool)));
 }
 
 void MainWindow::connectSetup() {
@@ -184,21 +184,29 @@ void MainWindow::slotConnectClicked(bool checked) {
         }
     } else {
         if (motorMode) {                        // Setup for motor test
+            fprintf(stderr,"Setup IO - in motorMode\n");
             if (checked) {
+                fprintf(stderr,"Setup IO - in motorMode, checked\n");
                 if ( nullptr == motor ) {
                     motor = new Motor();
                 }
+                fprintf(stderr,"Setup IO - in motorMode, checked, motor class allocated\n");
                 connected = motor->setupForMotor();
+                fprintf(stderr,"setupForMotor\n");
                 ui->connectButton->setText("Setting Up");
                 ui->talkAddress->setText( "Test Setup" ); // ?
+                fprintf(stderr,"setup text\n");
                 if ( connected ) {
+                    fprintf(stderr,"connected\n");
                     ui->connectButton->setText("IO Ready");
                     ui->talkBox->show();
                 } else {
+                    fprintf(stderr,"not connected\n");
                     ui->connectButton->setText("Not Ready");
                     ui->talkBox->hide();
                     ui->connectButton->setChecked(false);
                 }
+                fprintf(stderr,"ended\n");
             } else {
                 ui->talkAddress->setText( "" );
                 connected = motor->resetForMotor();
@@ -220,13 +228,6 @@ void MainWindow::slotOKClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-//        ui->m1Slider->setValue( 0 );
-//        if ( checked ) {
-//            motor->onPin(L1);
-//        } else {
-//            motor->offPin(L1);
-//        }
-
         motor->checkMotor( 1, 1, 50 );  // Motor 1, forward, speed
 
     }
@@ -241,12 +242,6 @@ void MainWindow::slotHelloClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-//        ui->m2Slider->setValue( 0 );
-//        if ( checked ) {
-//            motor->onPin(L2);
-//        } else {
-//            motor->offPin(L2);
-//        }
         motor->checkMotor( 2, 1, 50 );  // Motor 2, forward, speed
 
     }
@@ -261,12 +256,7 @@ void MainWindow::slotBlinkClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        ui->m3Slider->setValue( 0 );
-        if ( checked ) {
-            motor->onPin(L3);
-        } else {
-            motor->offPin(L3);
-        }
+        motor->checkMotor( 3, 1, 50 );  // Motor 3, forward, speed
     }
 }
 
@@ -285,5 +275,33 @@ void MainWindow::slotStopClicked(bool checked) {
         } else {
             motor->offPin(L4);
         }
+    }
+}
+
+void MainWindow::m1rv(bool checked) {
+
+    if (motorMode) {
+        motor->checkMotor( 1, 0, 50 );  // Motor 1, reverse, speed
+    }
+}
+
+void MainWindow::m2rv(bool checked) {
+
+    if (motorMode) {
+        motor->checkMotor( 2, 0, 50 );  // Motor 2, reverse, speed
+    }
+}
+
+void MainWindow::m3rv(bool checked) {
+
+    if (motorMode) {
+        motor->checkMotor( 3, 0, 50 );  // Motor 3, reverse, speed
+    }
+}
+
+void MainWindow::m4rv(bool checked) {
+
+    if (motorMode) {
+        motor->blinkLED();
     }
 }

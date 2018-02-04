@@ -46,6 +46,12 @@ private slots:
 
     void sliderChanged(int newValue);
 
+    void m1rv(bool checked);
+    void m2rv(bool checked);
+    void m3rv(bool checked);
+    void m4rv(bool checked);
+
+
 };
 
 #endif // MAINWINDOW_H

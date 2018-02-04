@@ -3,7 +3,7 @@
 
 Motor::Motor() {
 
-    activated = false;
+//    activated = false;
 }
 
 bool Motor::setupForMotor() {
@@ -11,45 +11,60 @@ bool Motor::setupForMotor() {
 #ifdef USE_MOTOR
     int setupResult = wiringPiSetup();
     if ( setupResult == -1 ) {
-        printf( "Error setting up wiringPi." );
-        return;
+        fprintf( stderr, "Error setting up wiringPi." );
+        return false;
     }
-    printf( "Pi version: %d\n", setupResult );
+    fprintf( stderr, "Pi version: %d\n", setupResult );
 
-    pinMode( L1, OUTPUT );
+    pinMode( L1, SOFT_PWM_OUTPUT );
+    softPwmCreate( L1, 0, 100 );
     pinMode( L2, OUTPUT );
     pinMode( L3, OUTPUT );
     pinMode( L4, OUTPUT );
 
-    pinMode( M1En, PWM_OUTPUT );
-    pinMode( M1FW, OUTPUT );
+    pinMode( M1En, SOFT_PWM_OUTPUT );
+    pinMode( M1Fw, OUTPUT );
     pinMode( M1Rv, OUTPUT );
 
-    pinMode( M2En, PWM_OUTPUT );
+    pinMode( M2En, SOFT_PWM_OUTPUT );
     pinMode( M2Fw, OUTPUT );
     pinMode( M2Rv, OUTPUT );
+
+    pinMode( M3En, SOFT_PWM_OUTPUT );
+    pinMode( M3Fw, OUTPUT );
+    pinMode( M3Rv, OUTPUT );
+
+    softPwmCreate( M1En, 0, 100 );
+    softPwmCreate( M2En, 0, 100 );
+    softPwmCreate( M3En, 0, 100 );
 #endif  // USE_MOTOR
 
-    activated = true;
-    return activated;
+//    activated = true;q
+    return true;
 }
 
 bool Motor::resetForMotor() {
 
-    activated = false;
-    return activated;
+    softPwmStop( L1 );
+    softPwmStop( M1En );
+    softPwmStop( M2En );
+//    activated = false;
+    return false;
 }
 
 void Motor::blinkLED() {
 
-    for (int i = 0; i < 4; i++ ) {
+    for (int i = 10; i < 100; i += 20 ) {
 #ifdef USE_MOTOR
-        digitalWrite (L1, HIGH) ;	// On
-        delay (500) ;                // mS
-        digitalWrite (L1, LOW) ;	// Off
-        delay (500) ;
+//        digitalWrite (L1, HIGH) ;	// On
+//        delay (500) ;                // mS
+//        digitalWrite (L1, LOW) ;	// Off
+//        delay (500) ;
+        setPin( L1, i );
+        delay( 1000 );
 #endif  // USE_MOTOR
     }
+    setPin( L1, 0 );
 }
 
 void Motor::onPin( int pin ) {
@@ -68,12 +83,13 @@ void Motor::offPin( int pin ) {
 void Motor::setPin( int pin, int value ) {
 
 #ifdef USE_MOTOR
-    pwmWrite (pin, value) ;
+    softPwmWrite( pin, value ) ;
 #endif  // USE_MOTOR
 }
 
 void Motor::checkMotor(int motor, int direction , int speed) {
 
+    fprintf(stderr,"checkMotor motor == %d\n", motor);
     if ( motor == 1 ) {
         setPin( M1En, 0 );
         if ( direction == 1 ) {
@@ -86,7 +102,7 @@ void Motor::checkMotor(int motor, int direction , int speed) {
 
         setPin( M1En, speed );
 #ifdef USE_MOTOR
-        delay( 1 );
+        delay( 1000 );
 #endif  // USE_MOTOR
         setPin( M1En, 0 );
 
@@ -103,9 +119,26 @@ void Motor::checkMotor(int motor, int direction , int speed) {
 
         setPin( M2En, speed );
 #ifdef USE_MOTOR
-        delay( 1 );
+        delay( 1000 );
 #endif  // USE_MOTOR
         setPin( M2En, 0 );
+
+    }
+    if ( motor == 3 ) {
+        setPin( M3En, 0 );
+        if ( direction == 1 ) {
+            onPin( M3Fw );
+            offPin( M3Rv );
+        } else {
+            offPin( M3Fw );
+            onPin( M3Rv );
+        }
+
+        setPin( M3En, speed );
+#ifdef USE_MOTOR
+        delay( 1000 );
+#endif  // USE_MOTOR
+        setPin( M3En, 0 );
 
     }
 }
