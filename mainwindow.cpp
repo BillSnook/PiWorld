@@ -53,7 +53,9 @@ void MainWindow::buttonSetup() {
 void MainWindow::connectSetup() {
 
     ui->talkAddress->setText( "develop31" ); // Initial setting
-    piPtr = new commPi();
+    if ( nullptr == piPtr ) {
+        piPtr = new commPi();
+    }
     connected = piPtr->getCommStateConnected();
     if (connected) {
         ui->connectButton->setText("Disconnect");
@@ -127,6 +129,8 @@ void MainWindow::slotMotorMenu() {
 
     commMode = false;
     motorMode = true;
+
+    ui->talkAddress->setText( "" );
 
     ui->connectButton->setText("Setup IO");
     ui->connectBox->show();
@@ -216,12 +220,15 @@ void MainWindow::slotOKClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        ui->m1Slider->setValue( 0 );
-        if ( checked ) {
-            motor->onPin(L1);
-        } else {
-            motor->offPin(L1);
-        }
+//        ui->m1Slider->setValue( 0 );
+//        if ( checked ) {
+//            motor->onPin(L1);
+//        } else {
+//            motor->offPin(L1);
+//        }
+
+        motor->checkMotor( 1, 1, 50 );  // Motor 1, forward, speed
+
     }
 }
 
@@ -234,12 +241,14 @@ void MainWindow::slotHelloClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        ui->m2Slider->setValue( 0 );
-        if ( checked ) {
-            motor->onPin(L2);
-        } else {
-            motor->offPin(L2);
-        }
+//        ui->m2Slider->setValue( 0 );
+//        if ( checked ) {
+//            motor->onPin(L2);
+//        } else {
+//            motor->offPin(L2);
+//        }
+        motor->checkMotor( 2, 1, 50 );  // Motor 2, forward, speed
+
     }
 }
 
