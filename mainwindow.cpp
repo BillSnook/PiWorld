@@ -91,9 +91,6 @@ void MainWindow::sliderChanged(int newValue) {
     ui->messageTextLine->setText( QString::number(newValue) );
 }
 
-//ui->messageTextLine->setText("ok");
-//ui->responseDisplay->setPlainText(resp);
-
 
 MainWindow::~MainWindow() {
     delete ui;
@@ -184,18 +181,13 @@ void MainWindow::slotConnectClicked(bool checked) {
         }
     } else {
         if (motorMode) {                        // Setup for motor test
-            fprintf(stderr,"Setup IO - in motorMode\n");
             if (checked) {
-                fprintf(stderr,"Setup IO - in motorMode, checked\n");
                 if ( nullptr == motor ) {
                     motor = new Motor();
                 }
-                fprintf(stderr,"Setup IO - in motorMode, checked, motor class allocated\n");
                 connected = motor->setupForMotor();
-                fprintf(stderr,"setupForMotor\n");
                 ui->connectButton->setText("Setting Up");
                 ui->talkAddress->setText( "Test Setup" ); // ?
-                fprintf(stderr,"setup text\n");
                 if ( connected ) {
                     fprintf(stderr,"connected\n");
                     ui->connectButton->setText("IO Ready");
@@ -206,7 +198,6 @@ void MainWindow::slotConnectClicked(bool checked) {
                     ui->talkBox->hide();
                     ui->connectButton->setChecked(false);
                 }
-                fprintf(stderr,"ended\n");
             } else {
                 ui->talkAddress->setText( "" );
                 connected = motor->resetForMotor();
@@ -256,7 +247,7 @@ void MainWindow::slotBlinkClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        motor->checkMotor( 3, 1, 50 );  // Motor 3, forward, speed
+        motor->checkMotor( 3, 1, 100 );  // Motor 3, forward, speed
     }
 }
 
