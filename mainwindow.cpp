@@ -1,6 +1,9 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include "commpi.h"
+#include "motor.h"
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -242,8 +245,11 @@ void MainWindow::slotOKClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        motor->checkMotor( 1, 1, speed[0] );  // Motor 1, forward, speed
-
+        if ( checked ) {    // Turn on
+            motor->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
+        } else {            // Turn off
+            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
+        }
     }
 }
 
@@ -256,8 +262,11 @@ void MainWindow::slotHelloClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        motor->checkMotor( 2, 1, speed[1] );  // Motor 2, forward, speed
-
+        if ( checked ) {    // Turn on
+            motor->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
+        } else {            // Turn off
+            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
+        }
     }
 }
 
@@ -270,7 +279,13 @@ void MainWindow::slotBlinkClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        motor->checkMotor( 3, 1, speed[2] );  // Motor 3, forward, speed
+        if ( checked ) {    // Turn on
+            motor->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
+            motor->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
+        } else {            // Turn off
+            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
+            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
+        }
     }
 }
 
@@ -296,9 +311,9 @@ void MainWindow::m1rv(bool checked) {
 
     if (motorMode) {
         if ( checked ) {
-            motor->checkMotor( 1, 0, speed[0] );    // Motor 1, reverse, speed
+            motor->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverse, speed
         } else {
-            motor->checkMotor( 1, 0, 0 );           // Motor 1, reverse, stop
+            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
         }
     }
 }
@@ -307,9 +322,9 @@ void MainWindow::m2rv(bool checked) {
 
     if (motorMode) {
         if ( checked ) {
-            motor->checkMotor( 2, 0, speed[1] );    // Motor 2, reverse, speed
+            motor->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
         } else {
-            motor->checkMotor( 2, 0,0 );            // Motor 2, reverse, speed
+            motor->setMtrSpd( 2, 0 );               // Motor 2, reverse, speed
         }
     }
 }
@@ -317,10 +332,12 @@ void MainWindow::m2rv(bool checked) {
 void MainWindow::m3rv(bool checked) {
 
     if (motorMode) {
-        if ( checked ) {
-            motor->checkMotor( 3, 0, speed[2] );    // Motor 3, reverse, speed
-        } else {
-            motor->checkMotor( 3, 0, 0 );           // Motor 3, reverse, speed
+        if ( checked ) {    // Turn on
+            motor->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverses, speed
+            motor->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
+        } else {            // Turn off
+            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
+            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
         }
     }
 }

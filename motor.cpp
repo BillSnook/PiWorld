@@ -144,3 +144,40 @@ void Motor::checkMotor(int motor, int direction , int speed) {
 
     }
 }
+
+
+void Motor::setMtrDirSpd(int motor, int direction , int speed) {
+
+    fprintf(stderr,"setMtrDirSpd m %d, d: %s, s: %d\n", motor, direction ? "f" : "r", speed);
+    if ( motor == 1 ) {
+        if ( direction == 1 ) {
+            onPin( M1Fw );
+            offPin( M1Rv );
+        } else {
+            offPin( M1Fw );
+            onPin( M1Rv );
+        }
+        setPin( M1En, speed );
+    }
+    if ( motor == 2 ) {
+        if ( direction == 1 ) {
+            onPin( M2Fw );
+            offPin( M2Rv );
+        } else {
+            offPin( M2Fw );
+            onPin( M2Rv );
+        }
+        setPin( M2En, speed );
+    }
+}
+
+void Motor::setMtrSpd(int motor, int speed) {
+
+    fprintf(stderr,"setMtrSpd m %d, s: %d\n", motor, speed);
+    if ( motor == 1 ) {
+        setPin( M1En, speed );
+    }
+    if ( motor == 2 ) {
+        setPin( M2En, speed );
+    }
+}

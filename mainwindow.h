@@ -3,9 +3,9 @@
 
 #include <QMainWindow>
 
-#include "commpi.h"
-#include "motor.h"
 
+class commPi;
+class Motor;
 
 namespace Ui {
 class MainWindow;
