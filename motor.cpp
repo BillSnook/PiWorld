@@ -45,9 +45,11 @@ bool Motor::setupForMotor() {
 
 bool Motor::resetForMotor() {
 
+#ifdef USE_MOTOR
     softPwmStop( L1 );
     softPwmStop( M1En );
     softPwmStop( M2En );
+#endif  // USE_MOTOR
 //    activated = false;
     return false;
 }

@@ -71,24 +71,43 @@ void MainWindow::sliderSetup() {
 
     ui->m1Slider->setRange( 0, 100 );
     ui->m1Slider->show();
-    connect(ui->m1Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
+    connect(ui->m1Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged1(int)));
 
     ui->m2Slider->setRange( 0, 100 );
     ui->m2Slider->show();
-    connect(ui->m2Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
+    connect(ui->m2Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged2(int)));
 
     ui->m3Slider->setRange( 0, 100 );
     ui->m3Slider->show();
-    connect(ui->m3Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
+    connect(ui->m3Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged3(int)));
 
     ui->m4Slider->setRange( 0, 100 );
     ui->m4Slider->show();
-    connect(ui->m4Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged(int)));
+    connect(ui->m4Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged4(int)));
 }
 
-void MainWindow::sliderChanged(int newValue) {
+void MainWindow::sliderChanged1(int newValue) {
 
     ui->messageTextLine->setText( QString::number(newValue) );
+    speed[0] = newValue;
+}
+
+void MainWindow::sliderChanged2(int newValue) {
+
+    ui->messageTextLine->setText( QString::number(newValue) );
+    speed[1] = newValue;
+}
+
+void MainWindow::sliderChanged3(int newValue) {
+
+    ui->messageTextLine->setText( QString::number(newValue) );
+    speed[2] = newValue;
+}
+
+void MainWindow::sliderChanged4(int newValue) {
+
+    ui->messageTextLine->setText( QString::number(newValue) );
+    speed[3] = newValue;
 }
 
 
@@ -145,6 +164,10 @@ void MainWindow::slotMotorMenu() {
     ui->helloButton_2->show();
     ui->blinkButton_2->show();
     ui->stopButton_2->show();
+
+    for ( int i = 0; i < 4; i++ ) {
+        speed[i] = 0;
+    }
 
     sliderSetup();
 }
@@ -219,7 +242,7 @@ void MainWindow::slotOKClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        motor->checkMotor( 1, 1, 50 );  // Motor 1, forward, speed
+        motor->checkMotor( 1, 1, speed[0] );  // Motor 1, forward, speed
 
     }
 }
@@ -233,7 +256,7 @@ void MainWindow::slotHelloClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        motor->checkMotor( 2, 1, 50 );  // Motor 2, forward, speed
+        motor->checkMotor( 2, 1, speed[1] );  // Motor 2, forward, speed
 
     }
 }
@@ -247,7 +270,7 @@ void MainWindow::slotBlinkClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        motor->checkMotor( 3, 1, 100 );  // Motor 3, forward, speed
+        motor->checkMotor( 3, 1, speed[2] );  // Motor 3, forward, speed
     }
 }
 
@@ -272,21 +295,33 @@ void MainWindow::slotStopClicked(bool checked) {
 void MainWindow::m1rv(bool checked) {
 
     if (motorMode) {
-        motor->checkMotor( 1, 0, 50 );  // Motor 1, reverse, speed
+        if ( checked ) {
+            motor->checkMotor( 1, 0, speed[0] );    // Motor 1, reverse, speed
+        } else {
+            motor->checkMotor( 1, 0, 0 );           // Motor 1, reverse, stop
+        }
     }
 }
 
 void MainWindow::m2rv(bool checked) {
 
     if (motorMode) {
-        motor->checkMotor( 2, 0, 50 );  // Motor 2, reverse, speed
+        if ( checked ) {
+            motor->checkMotor( 2, 0, speed[1] );    // Motor 2, reverse, speed
+        } else {
+            motor->checkMotor( 2, 0,0 );            // Motor 2, reverse, speed
+        }
     }
 }
 
 void MainWindow::m3rv(bool checked) {
 
     if (motorMode) {
-        motor->checkMotor( 3, 0, 50 );  // Motor 3, reverse, speed
+        if ( checked ) {
+            motor->checkMotor( 3, 0, speed[2] );    // Motor 3, reverse, speed
+        } else {
+            motor->checkMotor( 3, 0, 0 );           // Motor 3, reverse, speed
+        }
     }
 }
 

@@ -28,6 +28,8 @@ private:
     bool commMode;
     bool motorMode;
 
+    int speed[4];
+
     void menuSetup();
     void buttonSetup();
     void connectSetup();
@@ -44,7 +46,10 @@ private slots:
     void slotBlinkClicked(bool checked);
     void slotStopClicked(bool checked);
 
-    void sliderChanged(int newValue);
+    void sliderChanged1(int newValue);
+    void sliderChanged2(int newValue);
+    void sliderChanged3(int newValue);
+    void sliderChanged4(int newValue);
 
     void m1rv(bool checked);
     void m2rv(bool checked);

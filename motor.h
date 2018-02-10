@@ -4,7 +4,7 @@
 #include <QObject>
 
 
-#define USE_MOTOR
+//#define USE_MOTOR
 
 #ifdef USE_MOTOR
 #include <wiringPi.h>
