@@ -63,13 +63,8 @@ bool Motor::setupForMotor() {
     pinMode( M2Fw, OUTPUT );
     pinMode( M2Rv, OUTPUT );
 
-    pinMode( M3En, SOFT_PWM_OUTPUT );
-    pinMode( M3Fw, OUTPUT );
-    pinMode( M3Rv, OUTPUT );
-
     softPwmCreate( M1En, 0, 100 );
     softPwmCreate( M2En, 0, 100 );
-    softPwmCreate( M3En, 0, 100 );
 #endif  // USE_MOTOR
 
 //    activated = true;q
@@ -157,23 +152,6 @@ void Motor::checkMotor(int motor, int direction , int speed) {
         delay( 1000 );
 #endif  // USE_MOTOR
         setPin( M2En, 0 );
-
-    }
-    if ( motor == 3 ) {
-        setPin( M3En, 0 );
-        if ( direction == 1 ) {
-            onPin( M3Fw );
-            offPin( M3Rv );
-        } else {
-            offPin( M3Fw );
-            onPin( M3Rv );
-        }
-
-        setPin( M3En, speed );
-#ifdef USE_MOTOR
-        delay( 1000 );
-#endif  // USE_MOTOR
-        setPin( M3En, 0 );
 
     }
 }

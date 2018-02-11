@@ -4,7 +4,7 @@
 #include <QObject>
 
 
-#define USE_MOTOR
+//#define USE_MOTOR
 
 #ifdef USE_MOTOR
 #include <wiringPi.h>
@@ -23,9 +23,6 @@
 #define M2En    6
 #define M2Fw    5
 #define M2Rv    4
-#define M3En    12
-#define M3Fw    14
-#define M3Rv    13
 
 
 class Motor : public QObject
