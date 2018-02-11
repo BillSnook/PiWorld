@@ -47,6 +47,7 @@ public:
     void checkMotor( int motor, int direction, int speed );
     void setMtrDirSpd(int motor, int direction , int speed);
     void setMtrSpd(int motor, int speed);
+    void getUPS();
 };
 
 #endif // MOTOR_H

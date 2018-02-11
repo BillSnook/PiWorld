@@ -345,6 +345,6 @@ void MainWindow::m3rv(bool checked) {
 void MainWindow::m4rv(bool checked) {
 
     if (motorMode) {
-        motor->blinkLED();
+        motor->getUPS();
     }
 }

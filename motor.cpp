@@ -1,5 +1,38 @@
 #include "motor.h"
 
+#include <unistd.h>			// close read write
+#include <stdio.h>			// printf
+#include <fcntl.h>			// open
+#include <linux/i2c-dev.h>
+#include <sys/ioctl.h>
+#include <getopt.h>
+
+
+#define VREG 2
+#define CREG 4
+#define BUFSIZE	16
+#define DEV "/dev/i2c-1"
+#define ADRS 0x36
+
+
+static int readReg(int busfd, __uint16_t reg, unsigned char *buf, int bufsize)
+{
+    unsigned char reg_buf[2];
+
+    reg_buf[0] = (reg >> 0) & 0xFF;
+    reg_buf[1] = (reg >> 8) & 0xFF;
+
+    int ret = write(busfd, reg_buf, 2);
+
+    if (ret < 0) {
+        printf("Write failed trying to read reg: %04x (0x%02x 0x%02x)\n", reg, reg_buf[0], reg_buf[1]);
+        return ret;
+    }
+
+    return read(busfd, buf, bufsize);
+}
+
+
 
 Motor::Motor() {
 
@@ -180,4 +213,48 @@ void Motor::setMtrSpd(int motor, int speed) {
     if ( motor == 2 ) {
         setPin( M2En, speed );
     }
+}
+
+void Motor::getUPS() {
+
+    int vOpt = 1, cOpt = 1;
+    unsigned char buf[BUFSIZE] = {0};
+
+    int busfd;
+    if ((busfd = open(DEV, O_RDWR)) < 0) {
+        printf("can't open %s (running as root?)\n",DEV);
+        return;
+    }
+
+    int ret = ioctl(busfd, I2C_SLAVE, ADRS);
+    if (ret < 0) {
+        printf("i2c device initialisation failed\n");
+        return;
+    }
+
+    readReg(busfd, VREG, buf, 2);
+
+    int hi,lo;
+    hi = buf[0];
+    lo = buf[1];
+    int v = (hi << 8)+lo;
+    if (vOpt) {
+        fprintf( stderr, "%fV ",(((float)v)* 78.125 / 1000000.0));
+    }
+
+    readReg(busfd, CREG, buf, 2);
+    hi = buf[0];
+    lo = buf[1];
+    v = (hi << 8)+lo;
+    if (!cOpt && !vOpt) {
+        fprintf( stderr, "%i",(int)(((float)v) / 256.0));
+    }
+
+    if (cOpt) {
+        fprintf( stderr, "%f%%",(((float)v) / 256.0));
+    }
+
+    fprintf( stderr, "\n");
+
+    close(busfd);
 }
