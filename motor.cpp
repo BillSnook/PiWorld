@@ -156,7 +156,6 @@ void Motor::checkMotor(int motor, int direction , int speed) {
     }
 }
 
-
 void Motor::setMtrDirSpd(int motor, int direction , int speed) {
 
     fprintf(stderr,"setMtrDirSpd m %d, d: %s, s: %d\n", motor, direction ? "f" : "r", speed);
@@ -193,6 +192,7 @@ void Motor::setMtrSpd(int motor, int speed) {
     }
 }
 
+// Next is two ways to access the I2C bus (SMBus)
 void Motor::getUPS() {
 
     int vOpt = 1, cOpt = 1;
@@ -235,4 +235,26 @@ void Motor::getUPS() {
     fprintf( stderr, "\n");
 
     close(busfd);
+}
+
+void Motor::getUPS2() {
+
+#ifdef USE_MOTOR
+    int fd = wiringPiI2CSetup( ADRS );
+
+    int v = wiringPiI2CReadReg16( fd, VREG );
+    int lo = (v >> 8) & 0x00FF;
+    int hi = (v << 8) & 0xFF00;
+    v = hi + lo;
+    fprintf( stderr, "%fV ",(((float)v)* 78.125 / 1000000.0));
+
+    int c = wiringPiI2CReadReg16( fd, CREG );
+    lo = (c >> 8) & 0x00FF;
+    hi = (c << 8) & 0xFF00;
+    c = hi + lo;
+    fprintf( stderr, "%f%%",(((float)c) / 256.0));
+
+    fprintf( stderr, "\n");
+    close( fd );
+#endif // USE_MOTOR
 }

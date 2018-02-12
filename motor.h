@@ -4,11 +4,12 @@
 #include <QObject>
 
 
-//#define USE_MOTOR
+#define USE_MOTOR
 
 #ifdef USE_MOTOR
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <wiringPiI2C.h>
 #endif  // USE_MOTOR
 
 
@@ -45,6 +46,7 @@ public:
     void setMtrDirSpd(int motor, int direction , int speed);
     void setMtrSpd(int motor, int speed);
     void getUPS();
+    void getUPS2();
 };
 
 #endif // MOTOR_H
