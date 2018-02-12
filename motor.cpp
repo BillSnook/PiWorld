@@ -15,24 +15,6 @@
 #define ADRS 0x36
 
 
-static int readReg(int busfd, __uint16_t reg, unsigned char *buf, int bufsize)
-{
-    unsigned char reg_buf[2];
-
-    reg_buf[0] = (reg >> 0) & 0xFF;
-    reg_buf[1] = (reg >> 8) & 0xFF;
-
-    int ret = write(busfd, reg_buf, 2);
-
-    if (ret < 0) {
-        printf("Write failed trying to read reg: %04x (0x%02x 0x%02x)\n", reg, reg_buf[0], reg_buf[1]);
-        return ret;
-    }
-
-    return read(busfd, buf, bufsize);
-}
-
-
 
 Motor::Motor() {
 
@@ -67,7 +49,7 @@ bool Motor::setupForMotor() {
     softPwmCreate( M2En, 0, 100 );
 #endif  // USE_MOTOR
 
-//    activated = true;q
+//    activated = true;
     return true;
 }
 
@@ -78,6 +60,7 @@ bool Motor::resetForMotor() {
     softPwmStop( M1En );
     softPwmStop( M2En );
 #endif  // USE_MOTOR
+
 //    activated = false;
     return false;
 }
@@ -90,11 +73,11 @@ void Motor::blinkLED() {
 //        delay (500) ;                // mS
 //        digitalWrite (L1, LOW) ;	// Off
 //        delay (500) ;
-        setPin( L1, i );
+        setPWMPin( L1, i );
         delay( 1000 );
 #endif  // USE_MOTOR
     }
-    setPin( L1, 0 );
+    setPWMPin( L1, 0 );
 }
 
 void Motor::onPin( int pin ) {
@@ -103,6 +86,7 @@ void Motor::onPin( int pin ) {
     digitalWrite (pin, HIGH) ;	// On
 #endif  // USE_MOTOR
 }
+
 void Motor::offPin( int pin ) {
 
 #ifdef USE_MOTOR
@@ -110,7 +94,7 @@ void Motor::offPin( int pin ) {
 #endif  // USE_MOTOR
 }
 
-void Motor::setPin( int pin, int value ) {
+void Motor::setPWMPin( int pin, int value ) {
 
 #ifdef USE_MOTOR
     softPwmWrite( pin, value ) ;
@@ -121,7 +105,7 @@ void Motor::checkMotor(int motor, int direction , int speed) {
 
     fprintf(stderr,"checkMotor motor == %d\n", motor);
     if ( motor == 1 ) {
-        setPin( M1En, 0 );
+        setPWMPin( M1En, 0 );
         if ( direction == 1 ) {
             onPin( M1Fw );
             offPin( M1Rv );
@@ -130,15 +114,15 @@ void Motor::checkMotor(int motor, int direction , int speed) {
             onPin( M1Rv );
         }
 
-        setPin( M1En, speed );
+        setPWMPin( M1En, speed );
 #ifdef USE_MOTOR
         delay( 1000 );
 #endif  // USE_MOTOR
-        setPin( M1En, 0 );
+        setPWMPin( M1En, 0 );
 
     }
     if ( motor == 2 ) {
-        setPin( M2En, 0 );
+        setPWMPin( M2En, 0 );
         if ( direction == 1 ) {
             onPin( M2Fw );
             offPin( M2Rv );
@@ -147,11 +131,11 @@ void Motor::checkMotor(int motor, int direction , int speed) {
             onPin( M2Rv );
         }
 
-        setPin( M2En, speed );
+        setPWMPin( M2En, speed );
 #ifdef USE_MOTOR
         delay( 1000 );
 #endif  // USE_MOTOR
-        setPin( M2En, 0 );
+        setPWMPin( M2En, 0 );
 
     }
 }
@@ -167,7 +151,7 @@ void Motor::setMtrDirSpd(int motor, int direction , int speed) {
             offPin( M1Fw );
             onPin( M1Rv );
         }
-        setPin( M1En, speed );
+        setPWMPin( M1En, speed );
     }
     if ( motor == 2 ) {
         if ( direction == 1 ) {
@@ -177,7 +161,7 @@ void Motor::setMtrDirSpd(int motor, int direction , int speed) {
             offPin( M2Fw );
             onPin( M2Rv );
         }
-        setPin( M2En, speed );
+        setPWMPin( M2En, speed );
     }
 }
 
@@ -185,14 +169,30 @@ void Motor::setMtrSpd(int motor, int speed) {
 
     fprintf(stderr,"setMtrSpd m %d, s: %d\n", motor, speed);
     if ( motor == 1 ) {
-        setPin( M1En, speed );
+        setPWMPin( M1En, speed );
     }
     if ( motor == 2 ) {
-        setPin( M2En, speed );
+        setPWMPin( M2En, speed );
     }
 }
 
 // Next is two ways to access the I2C bus (SMBus)
+int Motor::readReg(int busfd, __uint16_t reg, unsigned char *buf, int bufsize) {
+    unsigned char reg_buf[2];
+
+    reg_buf[0] = (reg >> 0) & 0xFF;
+    reg_buf[1] = (reg >> 8) & 0xFF;
+
+    int ret = write(busfd, reg_buf, 2);
+
+    if (ret < 0) {
+        printf("Write failed trying to read reg: %04x (0x%02x 0x%02x)\n", reg, reg_buf[0], reg_buf[1]);
+        return ret;
+    }
+
+    return read(busfd, buf, bufsize);
+}
+
 void Motor::getUPS() {
 
     int vOpt = 1, cOpt = 1;
@@ -237,24 +237,45 @@ void Motor::getUPS() {
     close(busfd);
 }
 
-void Motor::getUPS2() {
+int Motor::getI2CReg( int reg ) {
+
+    int rdValue;
+#ifdef USE_MOTOR
+    rdValue = wiringPiI2CReadReg16 (pi2c, reg) ;	// On
+#endif  // USE_MOTOR
+    return rdValue;
+}
+
+void Motor::putI2CReg( int reg, int newValue ) {
 
 #ifdef USE_MOTOR
-    int fd = wiringPiI2CSetup( ADRS );
+    wiringPiI2CWriteReg16 (pi2c, reg, newValue);
+#endif  // USE_MOTOR
+}
 
-    int v = wiringPiI2CReadReg16( fd, VREG );
+char *Motor::getUPS2() {
+
+    char *statsV = (char *)malloc( 128 );
+    char statsC[64];
+
+#ifdef USE_MOTOR
+    pi2c = wiringPiI2CSetup( ADRS );
+
+    int v = getI2CReg( VREG );
     int lo = (v >> 8) & 0x00FF;
     int hi = (v << 8) & 0xFF00;
     v = hi + lo;
-    fprintf( stderr, "%fV ",(((float)v)* 78.125 / 1000000.0));
+    sprintf( statsV, "%fV ",(((float)v)* 78.125 / 1000000.0));
 
-    int c = wiringPiI2CReadReg16( fd, CREG );
+    int c = getI2CReg( CREG );
+    close( pi2c );
+
     lo = (c >> 8) & 0x00FF;
     hi = (c << 8) & 0xFF00;
     c = hi + lo;
-    fprintf( stderr, "%f%%",(((float)c) / 256.0));
-
-    fprintf( stderr, "\n");
-    close( fd );
+    sprintf( statsC, "%f%%\n",(((float)c) / 256.0));
+    strcat( statsV, statsC );
 #endif // USE_MOTOR
+
+    return statsV;
 }

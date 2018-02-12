@@ -32,8 +32,11 @@ class Motor : public QObject
 public:
     explicit Motor();
 
+private:
     bool activated;
+    int pi2c;             // File descriptor for I2C address
 
+public:
     bool setupForMotor();
     bool resetForMotor();
 
@@ -41,12 +44,17 @@ public:
     void onPin( int led );
     void offPin( int led );
 
-    void setPin( int pin, int value );
+    void setPWMPin( int pin, int value );
     void checkMotor( int motor, int direction, int speed );
     void setMtrDirSpd(int motor, int direction , int speed);
     void setMtrSpd(int motor, int speed);
+
+    int readReg(int busfd, __uint16_t reg, unsigned char *buf, int bufsize);
     void getUPS();
-    void getUPS2();
+
+    int getI2CReg( int reg );
+    void putI2CReg( int reg, int newValue );
+    char *getUPS2();
 };
 
 #endif // MOTOR_H

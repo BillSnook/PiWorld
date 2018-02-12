@@ -345,6 +345,8 @@ void MainWindow::m3rv(bool checked) {
 void MainWindow::m4rv(bool checked) {
 
     if (motorMode) {
-        motor->getUPS2();
+        char *upsStats = motor->getUPS2();
+        ui->responseDisplay->setPlainText(upsStats);
+        free( upsStats );
     }
 }
