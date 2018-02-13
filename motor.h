@@ -4,11 +4,12 @@
 #include <QObject>
 
 
-#define USE_MOTOR
+//#define USE_MOTOR
 
 #ifdef USE_MOTOR
 #include <wiringPi.h>
 #include <softPwm.h>
+#include <linux/i2c-dev.h>
 #include <wiringPiI2C.h>
 #endif  // USE_MOTOR
 
@@ -26,25 +27,25 @@
 #define M2Rv    4
 
 
-class Motor : public QObject
+class Motor // : public QObject
 {
-//    Q_OBJECT
+
 public:
     explicit Motor();
 
-private:
-    bool activated;
+    int motorRunning;
     int pi2c;             // File descriptor for I2C address
 
-public:
+
     bool setupForMotor();
     bool resetForMotor();
 
     void blinkLED();
+
     void onPin( int led );
     void offPin( int led );
-
     void setPWMPin( int pin, int value );
+
     void checkMotor( int motor, int direction, int speed );
     void setMtrDirSpd(int motor, int direction , int speed);
     void setMtrSpd(int motor, int speed);
@@ -55,6 +56,7 @@ public:
     int getI2CReg( int reg );
     void putI2CReg( int reg, int newValue );
     char *getUPS2();
+
 };
 
 #endif // MOTOR_H

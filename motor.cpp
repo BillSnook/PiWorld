@@ -3,7 +3,6 @@
 #include <unistd.h>			// close read write
 #include <stdio.h>			// printf
 #include <fcntl.h>			// open
-#include <linux/i2c-dev.h>
 #include <sys/ioctl.h>
 #include <getopt.h>
 
@@ -18,7 +17,7 @@
 
 Motor::Motor() {
 
-//    activated = false;
+    motorRunning = 1;
 }
 
 bool Motor::setupForMotor() {
@@ -49,8 +48,8 @@ bool Motor::setupForMotor() {
     softPwmCreate( M2En, 0, 100 );
 #endif  // USE_MOTOR
 
-//    activated = true;
-    return true;
+//    motorRunning = 1;
+    return motorRunning;
 }
 
 bool Motor::resetForMotor() {
@@ -61,8 +60,8 @@ bool Motor::resetForMotor() {
     softPwmStop( M2En );
 #endif  // USE_MOTOR
 
-//    activated = false;
-    return false;
+//    motorRunning = 0;
+    return motorRunning;
 }
 
 void Motor::blinkLED() {
@@ -204,11 +203,13 @@ void Motor::getUPS() {
         return;
     }
 
+#ifdef USE_MOTOR
     int ret = ioctl(busfd, I2C_SLAVE, ADRS);
     if (ret < 0) {
         printf("i2c device initialisation failed\n");
         return;
     }
+#endif  // USE_MOTOR
 
     readReg(busfd, VREG, buf, 2);
 
@@ -239,7 +240,7 @@ void Motor::getUPS() {
 
 int Motor::getI2CReg( int reg ) {
 
-    int rdValue;
+    int rdValue = 0;
 #ifdef USE_MOTOR
     rdValue = wiringPiI2CReadReg16 (pi2c, reg) ;	// On
 #endif  // USE_MOTOR

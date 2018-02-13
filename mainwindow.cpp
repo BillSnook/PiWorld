@@ -216,7 +216,7 @@ void MainWindow::slotConnectClicked(bool checked) {
                 ui->talkAddress->setText( "Test Setup" ); // ?
                 if ( connected ) {
                     fprintf(stderr,"connected\n");
-                    ui->connectButton->setText("IO Ready");
+                    ui->connectButton->setText("Cleanup IO");
                     ui->talkBox->show();
                 } else {
                     fprintf(stderr,"not connected\n");
@@ -231,7 +231,7 @@ void MainWindow::slotConnectClicked(bool checked) {
                 ui->talkBox->hide();
             }
         } else {
-            ui->talkAddress->setText( "In slotConnectClicked but no mode is set" );
+            ui->talkAddress->setText( "No mode set - use menu" );
         }
     }
 }
