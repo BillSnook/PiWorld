@@ -5,7 +5,7 @@
 
 
 class commPi;
-class Motor;
+class hardware;
 
 namespace Ui {
 class MainWindow;
@@ -20,9 +20,9 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
-    commPi *piPtr;
-    Motor *motor;
+    Ui::MainWindow  *ui;
+    commPi          *piPtr;
+    hardware        *motor;
 
     bool connected;
     bool commMode;

@@ -16,12 +16,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
             mainwindow.cpp \
             commpi.cpp \
-            motor.cpp
+            motor.cpp \
+            hardware.cpp
 
 HEADERS  += mainwindow.h \
             commpi.h \
-            motor.h
+            motor.h \
+            hardware.h
 
 FORMS    += mainwindow.ui
 
-LIBS    = -lwiringPi
+#LIBS    = -lwiringPi

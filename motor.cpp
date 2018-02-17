@@ -7,6 +7,8 @@
 #include <getopt.h>
 
 
+//  SBC HAT - GPIO-controlled
+//  Raspi UPS HAT V1.0
 #define VREG 2
 #define CREG 4
 #define BUFSIZE	16
@@ -64,7 +66,7 @@ bool Motor::resetForMotor() {
     return motorRunning;
 }
 
-void Motor::blinkLED() {
+void Motor::blinkLED() {    // Now steps brightness using soft PWM
 
     for (int i = 10; i < 100; i += 20 ) {
 #ifdef USE_MOTOR

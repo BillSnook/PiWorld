@@ -2,7 +2,7 @@
 #include "ui_mainwindow.h"
 
 #include "commpi.h"
-#include "motor.h"
+#include "hardware.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -209,7 +209,7 @@ void MainWindow::slotConnectClicked(bool checked) {
         if (motorMode) {                        // Setup for motor test
             if (checked) {
                 if ( nullptr == motor ) {
-                    motor = new Motor();
+                    motor = new hardware();
                 }
                 connected = motor->setupForMotor();
                 ui->connectButton->setText("Setting Up");
@@ -244,13 +244,13 @@ void MainWindow::slotOKClicked(bool checked) {
         char *resp = piPtr->sendMessage( "ok\n" );
         ui->responseDisplay->setPlainText(resp);
     }
-    if (motorMode) {
-        if ( checked ) {    // Turn on
-            motor->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
-        } else {            // Turn off
-            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
-        }
-    }
+//    if (motorMode) {
+//        if ( checked ) {    // Turn on
+//            motor->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
+//        } else {            // Turn off
+//            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
+//        }
+//    }
 }
 
 void MainWindow::slotHelloClicked(bool checked) {
@@ -261,13 +261,13 @@ void MainWindow::slotHelloClicked(bool checked) {
         char *resp = piPtr->sendMessage( "hello\n" );
         ui->responseDisplay->setPlainText(resp);
     }
-    if (motorMode) {
-        if ( checked ) {    // Turn on
-            motor->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
-        } else {            // Turn off
-            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
-        }
-    }
+//    if (motorMode) {
+//        if ( checked ) {    // Turn on
+//            motor->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
+//        } else {            // Turn off
+//            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
+//        }
+//    }
 }
 
 void MainWindow::slotBlinkClicked(bool checked) {
@@ -278,15 +278,15 @@ void MainWindow::slotBlinkClicked(bool checked) {
         char *resp = piPtr->sendMessage( "blink\n" );
         ui->responseDisplay->setPlainText(resp);
     }
-    if (motorMode) {
-        if ( checked ) {    // Turn on
-            motor->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
-            motor->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
-        } else {            // Turn off
-            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
-            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
-        }
-    }
+//    if (motorMode) {
+//        if ( checked ) {    // Turn on
+//            motor->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
+//            motor->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
+//        } else {            // Turn off
+//            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
+//            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
+//        }
+//    }
 }
 
 void MainWindow::slotStopClicked(bool checked) {
@@ -299,54 +299,54 @@ void MainWindow::slotStopClicked(bool checked) {
     }
     if (motorMode) {
         ui->m4Slider->setValue( 0 );
-        if ( checked ) {
-            motor->onPin(L4);
-        } else {
-            motor->offPin(L4);
-        }
+//        if ( checked ) {
+//            motor->onPin(L4);
+//        } else {
+//            motor->offPin(L4);
+//        }
     }
 }
 
 void MainWindow::m1rv(bool checked) {
 
-    if (motorMode) {
-        if ( checked ) {
-            motor->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverse, speed
-        } else {
-            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
-        }
-    }
+//    if (motorMode) {
+//        if ( checked ) {
+//            motor->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverse, speed
+//        } else {
+//            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
+//        }
+//    }
 }
 
 void MainWindow::m2rv(bool checked) {
 
-    if (motorMode) {
-        if ( checked ) {
-            motor->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
-        } else {
-            motor->setMtrSpd( 2, 0 );               // Motor 2, reverse, speed
-        }
-    }
+//    if (motorMode) {
+//        if ( checked ) {
+//            motor->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
+//        } else {
+//            motor->setMtrSpd( 2, 0 );               // Motor 2, reverse, speed
+//        }
+//    }
 }
 
 void MainWindow::m3rv(bool checked) {
 
-    if (motorMode) {
-        if ( checked ) {    // Turn on
-            motor->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverses, speed
-            motor->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
-        } else {            // Turn off
-            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
-            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
-        }
-    }
+//    if (motorMode) {
+//        if ( checked ) {    // Turn on
+//            motor->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverses, speed
+//            motor->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
+//        } else {            // Turn off
+//            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
+//            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
+//        }
+//    }
 }
 
 void MainWindow::m4rv(bool checked) {
 
-    if (motorMode) {
-        char *upsStats = motor->getUPS2();
-        ui->responseDisplay->setPlainText(upsStats);
-        free( upsStats );
-    }
+//    if (motorMode) {
+//        char *upsStats = motor->getUPS2();
+//        ui->responseDisplay->setPlainText(upsStats);
+//        free( upsStats );
+//    }
 }
