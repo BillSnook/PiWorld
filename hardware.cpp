@@ -17,13 +17,13 @@
 hardware::hardware() //  : QObject(parent)
 {
 
-    motorRunning = true;
-    pi2c = 0;
+//    motorsSetup = true;
+//    pi2c = 0;
 }
 
-bool hardware::setupForMotor() {
+bool hardware::setupForDCMotors() {
 
-#ifdef USE_MOTOR
+#ifdef USE_HARDWARE
     int setupResult = wiringPiSetup();
     if ( setupResult == -1 ) {
         fprintf( stderr, "Error setting up wiringPi." );
@@ -31,19 +31,19 @@ bool hardware::setupForMotor() {
     }
     fprintf( stderr, "Pi version: %d\n", setupResult );
 
-#endif  // USE_MOTOR
+#endif  // USE_HARDWARE
 
-//    motorRunning = 0;
+//    motorsSetup = true;
 
-    return motorRunning;
+    return true; //motorsSetup;
 }
 
-bool hardware::resetForMotor() {
+bool hardware::resetForDCMotors() {
 
-#ifdef USE_MOTOR
-#endif  // USE_MOTOR
+#ifdef USE_HARDWARE
+#endif  // USE_HARDWARE
 
-//    motorRunning = false;
-    return motorRunning;
+//    motorsSetup = false;
+    return false; //motorsSetup;
 }
 

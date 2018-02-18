@@ -208,10 +208,13 @@ void MainWindow::slotConnectClicked(bool checked) {
     } else {
         if (motorMode) {                        // Setup for motor test
             if (checked) {
-                if ( nullptr == motor ) {
-                    motor = new hardware();
+                fprintf(stderr,"before hw\n");
+                if ( nullptr == hw ) {
+                    hw = new hardware();
                 }
-                connected = motor->setupForMotor();
+                fprintf(stderr,"afterhw, %d, before setupForDCMotors\n", hw);
+                connected = hw->setupForDCMotors();
+                fprintf(stderr,"after setupForDCMotors\n");
                 ui->connectButton->setText("Setting Up");
                 ui->talkAddress->setText( "Test Setup" ); // ?
                 if ( connected ) {
@@ -226,7 +229,7 @@ void MainWindow::slotConnectClicked(bool checked) {
                 }
             } else {
                 ui->talkAddress->setText( "" );
-                connected = motor->resetForMotor();
+                connected = hw->resetForDCMotors();
                 ui->connectButton->setText("Setup IO");
                 ui->talkBox->hide();
             }
@@ -246,9 +249,9 @@ void MainWindow::slotOKClicked(bool checked) {
     }
 //    if (motorMode) {
 //        if ( checked ) {    // Turn on
-//            motor->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
+//            hw->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
 //        } else {            // Turn off
-//            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
+//            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
 //        }
 //    }
 }
@@ -263,9 +266,9 @@ void MainWindow::slotHelloClicked(bool checked) {
     }
 //    if (motorMode) {
 //        if ( checked ) {    // Turn on
-//            motor->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
+//            hw->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
 //        } else {            // Turn off
-//            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
+//            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
 //        }
 //    }
 }
@@ -280,11 +283,11 @@ void MainWindow::slotBlinkClicked(bool checked) {
     }
 //    if (motorMode) {
 //        if ( checked ) {    // Turn on
-//            motor->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
-//            motor->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
+//            hw->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
+//            hw->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
 //        } else {            // Turn off
-//            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
-//            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
+//            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
+//            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
 //        }
 //    }
 }
@@ -300,9 +303,9 @@ void MainWindow::slotStopClicked(bool checked) {
     if (motorMode) {
         ui->m4Slider->setValue( 0 );
 //        if ( checked ) {
-//            motor->onPin(L4);
+//            hw->onPin(L4);
 //        } else {
-//            motor->offPin(L4);
+//            hw->offPin(L4);
 //        }
     }
 }
@@ -311,9 +314,9 @@ void MainWindow::m1rv(bool checked) {
 
 //    if (motorMode) {
 //        if ( checked ) {
-//            motor->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverse, speed
+//            hw->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverse, speed
 //        } else {
-//            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
+//            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
 //        }
 //    }
 }
@@ -322,9 +325,9 @@ void MainWindow::m2rv(bool checked) {
 
 //    if (motorMode) {
 //        if ( checked ) {
-//            motor->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
+//            hw->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
 //        } else {
-//            motor->setMtrSpd( 2, 0 );               // Motor 2, reverse, speed
+//            hw->setMtrSpd( 2, 0 );               // Motor 2, reverse, speed
 //        }
 //    }
 }
@@ -333,11 +336,11 @@ void MainWindow::m3rv(bool checked) {
 
 //    if (motorMode) {
 //        if ( checked ) {    // Turn on
-//            motor->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverses, speed
-//            motor->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
+//            hw->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverses, speed
+//            hw->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
 //        } else {            // Turn off
-//            motor->setMtrSpd( 1, 0 );               // Motor 1, stop
-//            motor->setMtrSpd( 2, 0 );               // Motor 2, stop
+//            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
+//            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
 //        }
 //    }
 }
@@ -345,7 +348,7 @@ void MainWindow::m3rv(bool checked) {
 void MainWindow::m4rv(bool checked) {
 
 //    if (motorMode) {
-//        char *upsStats = motor->getUPS2();
+//        char *upsStats = hw->getUPS2();
 //        ui->responseDisplay->setPlainText(upsStats);
 //        free( upsStats );
 //    }
