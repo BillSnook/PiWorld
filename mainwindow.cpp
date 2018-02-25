@@ -208,13 +208,10 @@ void MainWindow::slotConnectClicked(bool checked) {
     } else {
         if (motorMode) {                        // Setup for motor test
             if (checked) {
-                fprintf(stderr,"before hw\n");
-                if ( nullptr == hw ) {
+//                if ( nullptr == hw ) {
                     hw = new hardware();
-                }
-                fprintf(stderr,"afterhw, %d, before setupForDCMotors\n", hw);
+//                }
                 connected = hw->setupForDCMotors();
-                fprintf(stderr,"after setupForDCMotors\n");
                 ui->connectButton->setText("Setting Up");
                 ui->talkAddress->setText( "Test Setup" ); // ?
                 if ( connected ) {
@@ -230,6 +227,7 @@ void MainWindow::slotConnectClicked(bool checked) {
             } else {
                 ui->talkAddress->setText( "" );
                 connected = hw->resetForDCMotors();
+                hw = nullptr;
                 ui->connectButton->setText("Setup IO");
                 ui->talkBox->hide();
             }

@@ -19,7 +19,7 @@
 
 Motor::Motor() {
 
-    motorRunning = 1;
+//    motorRunning = 1;
 }
 
 bool Motor::setupForMotor() {
@@ -51,7 +51,7 @@ bool Motor::setupForMotor() {
 #endif  // USE_MOTOR
 
 //    motorRunning = 1;
-    return motorRunning;
+    return true;
 }
 
 bool Motor::resetForMotor() {
@@ -63,7 +63,7 @@ bool Motor::resetForMotor() {
 #endif  // USE_MOTOR
 
 //    motorRunning = 0;
-    return motorRunning;
+    return false;
 }
 
 void Motor::blinkLED() {    // Now steps brightness using soft PWM
@@ -177,69 +177,6 @@ void Motor::setMtrSpd(int motor, int speed) {
     }
 }
 
-// Next is two ways to access the I2C bus (SMBus)
-int Motor::readReg(int busfd, __uint16_t reg, unsigned char *buf, int bufsize) {
-    unsigned char reg_buf[2];
-
-    reg_buf[0] = (reg >> 0) & 0xFF;
-    reg_buf[1] = (reg >> 8) & 0xFF;
-
-    int ret = write(busfd, reg_buf, 2);
-
-    if (ret < 0) {
-        printf("Write failed trying to read reg: %04x (0x%02x 0x%02x)\n", reg, reg_buf[0], reg_buf[1]);
-        return ret;
-    }
-
-    return read(busfd, buf, bufsize);
-}
-
-void Motor::getUPS() {
-
-    int vOpt = 1, cOpt = 1;
-    unsigned char buf[BUFSIZE] = {0};
-
-    int busfd;
-    if ((busfd = open(DEV, O_RDWR)) < 0) {
-        printf("can't open %s (running as root?)\n",DEV);
-        return;
-    }
-
-#ifdef USE_MOTOR
-    int ret = ioctl(busfd, I2C_SLAVE, ADRS);
-    if (ret < 0) {
-        printf("i2c device initialisation failed\n");
-        return;
-    }
-#endif  // USE_MOTOR
-
-    readReg(busfd, VREG, buf, 2);
-
-    int hi,lo;
-    hi = buf[0];
-    lo = buf[1];
-    int v = (hi << 8)+lo;
-    if (vOpt) {
-        fprintf( stderr, "%fV ",(((float)v)* 78.125 / 1000000.0));
-    }
-
-    readReg(busfd, CREG, buf, 2);
-    hi = buf[0];
-    lo = buf[1];
-    v = (hi << 8)+lo;
-    if (!cOpt && !vOpt) {
-        fprintf( stderr, "%i",(int)(((float)v) / 256.0));
-    }
-
-    if (cOpt) {
-        fprintf( stderr, "%f%%",(((float)v) / 256.0));
-    }
-
-    fprintf( stderr, "\n");
-
-    close(busfd);
-}
-
 int Motor::getI2CReg( int reg ) {
 
     int rdValue = 0;
@@ -258,7 +195,7 @@ void Motor::putI2CReg( int reg, int newValue ) {
 
 char *Motor::getUPS2() {
 
-    char *statsV = (char *)malloc( 128 );
+    char *statsV = (char *)valloc( 128 );
     char statsC[64];
 
 #ifdef USE_MOTOR
