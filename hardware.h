@@ -13,29 +13,6 @@
 #endif  // USE_HARDWARE
 
 
-// Registers/etc.
-#define MODE1           0x00
-#define MODE2           0x01
-#define SUBADR1         0X02
-#define SUBADR2         0X03
-#define SUBADR3         0X04
-#define PRESCALE        0XFE
-#define LED0_ON_L       0X06
-#define LED0_ON_H       0X07
-#define LED0_OFF_L      0X08
-#define LED0_OFF_H      0X09
-#define ALL_LED_ON_L    0XFA
-#define ALL_LED_ON_H    0XFB
-#define ALL_LED_OFF_L   0XFC
-#define ALL_LED_OFF_H   0XFD
-
-// Bits
-#define RESTART         0X80
-#define SLEEP           0x10
-#define ALLCALL         0x01
-#define INVRT           0x10
-#define OUTDRV          0x04
-
 
 class I2C {
 
@@ -43,10 +20,9 @@ public:
     explicit I2C( int addr );
 
     bool    debug;
-    int     address;             // I2C address
+    int     address;            // I2C address
     int     device;             // File handle to I2C device
 
-    int setupI2C( int addr );
     int i2cRead           (int reg) ;
     int i2cReadReg8       (int reg) ;
     int i2cReadReg16      (int reg) ;
@@ -58,19 +34,19 @@ public:
 };
 
 
-//class PWM {
+class PWM {
 
-//public:
-//    explicit PWM( int addr );
+public:
+    explicit PWM( I2C *i2cBus );
 
-//    bool    debug;
-//    int     address;             // I2C address
-//    I2C     i2c;
+    bool    debug;
+    int     address;             // I2C address
+    I2C     *i2c;
 
-//    void setPWMFrequency( int freq );
-//    void setPWM( int channel, int on, int off );
-//    void setPWMAll( int on, int off );
-//};
+    void setPWMFrequency( int freq );
+    void setPWM( int channel, int on, int off );
+    void setPWMAll( int on, int off );
+};
 
 ////class DCM {
 
@@ -89,10 +65,11 @@ public:
     explicit hardware();
 
     I2C     *i2c;
+    PWM     *pwm;
+
     bool    motorsSetup;
     int     i2cAddress;
     int     i2cFrequency;
-//    PWM     motors[2];
 
 
     bool setupForDCMotors();

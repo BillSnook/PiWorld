@@ -5,10 +5,11 @@
 //#define USE_MOTOR
 
 #ifdef USE_MOTOR
+
 #include <wiringPi.h>
-#include <hardware.h>
 #include <linux/i2c-dev.h>
 #include <wiringPiI2C.h>
+
 #endif  // USE_MOTOR
 
 

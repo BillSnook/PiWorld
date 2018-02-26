@@ -16,7 +16,6 @@
 #define ADRS 0x36
 
 
-
 Motor::Motor() {
 
 //    motorRunning = 1;

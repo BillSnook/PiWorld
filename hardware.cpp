@@ -5,6 +5,7 @@
 #include <fcntl.h>			// open
 #include <sys/ioctl.h>
 #include <getopt.h>
+#include <math.h>
 
 
 #define VREG 2
@@ -82,10 +83,10 @@ int I2C::i2cWriteReg16(int reg, int data) {
 #define CHANNEL0_OFF_L          0x08
 #define CHANNEL0_OFF_H          0x09
 
-#define CHANNEL0_ON_L           0x06
-#define CHANNEL0_ON_H           0x07
-#define CHANNEL0_OFF_L          0x08
-#define CHANNEL0_OFF_H          0x09
+#define ALLCHANNEL_ON_L         0xFA
+#define AllCHANNEL_ON_H         0xFB
+#define ALLCHANNEL_OFF_L        0xFC
+#define ALLCHANNEL_OFF_H        0xFD
 
 // Bits
 #define RESTART                 0x80
@@ -94,46 +95,64 @@ int I2C::i2cWriteReg16(int reg, int data) {
 #define INVRT                   0x10
 #define OUTDRV                  0x04
 
-//PWM::PWM( int device ) {
+PWM::PWM( I2C *i2cBus ) {
 
-//    debug = false;
-//    i2c = new I2C();
-//    i2c->setupI2C( device );
-//    setPWMAll( 0, 0 );                  // Clear all to 0
-//    i2c->i2cWrite( MODE2, OUTDRV );
-//    i2c->i2cWrite( MODE1, ALLCALL );
-//    i2c->i2cWrite( CHANNEL0_OFF_L, 0 );
-//    i2c->i2cWrite( CHANNEL0_OFF_H, 0 );
+    debug = false;
+    i2c = i2cBus;
+    setPWMAll( 0, 0 );                  // Clear all to 0
+    i2c->i2cWrite( MODE2, OUTDRV );
+    i2c->i2cWrite( MODE1, ALLCALL );
+    i2c->i2cWrite( CHANNEL0_OFF_L, 0 );
+    i2c->i2cWrite( CHANNEL0_OFF_H, 0 );
 
-//    delay( 1 );                         // Millisecond to let oscillator setup
+#ifdef USE_HARDWARE
+    delay( 1 );                         // Millisecond to let oscillator setup
+#endif  // USE_HARDWARE
 
-//    int mode1 = i2c->i2cRead( MODE1 );
-//    mode1 = mode1 & ~SLEEP;             // Turn off sleep - wake up
-//    i2c->i2cWrite( MODE1, mode1 );
+    int mode1 = i2c->i2cRead( MODE1 );
+    mode1 = mode1 & ~SLEEP;             // Turn off sleep - wake up
+    i2c->i2cWrite( MODE1, mode1 );
 
-//    delay( 1 );                         // Millisecond to let oscillator stabileize
+#ifdef USE_HARDWARE
+    delay( 1 );                         // Millisecond to let oscillator stabileize
+#endif  // USE_HARDWARE
 
 
-//}
+}
 
-//void PWM::setPWMFrequency( int freq ) {
-//}
+void PWM::setPWMFrequency( int freq ) {
 
-//void PWM::setPWM( int channel, int on, int off ) {
+    int prescaleval = 25000000.0;           // Nominal clock freq 25MHz
+    prescaleval /= 4096.0;                  // 12-bit
+    prescaleval /= float( freq );
+    prescaleval -= 1.0;                     // For averaging
 
-//    i2c->i2cWrite( CHANNEL0_ON_L + (4 * channel), on & 0xFF );
-//    i2c->i2cWrite( CHANNEL0_ON_H + (4 * channel), on >> 8 );
-//    i2c->i2cWrite( CHANNEL0_OFF_L + (4 * channel), off & 0xFF );
-//    i2c->i2cWrite( CHANNEL0_OFF_H + (4 * channel), off >> 8 );
-//}
+    prescaleval -= 1.0;
+    float prescale = floor(prescaleval + 0.5);
 
-//void PWM::setPWMAll( int on, int off ) {
+    int oldmode = i2c->i2cRead( MODE1 );
+    int newmode = ( oldmode & 0x7F ) | 0x10;  // sleep
+    i2c->i2cWrite( MODE1, newmode );             // go to sleep
+    i2c->i2cWrite( PRESCALE, int(floor(prescale)) );
+    i2c->i2cWrite( MODE1, oldmode );
 
-//    i2c->i2cWrite( ALLCHANNEL_ON_L, on & 0xFF );
-//    i2c->i2cWrite( ALLCHANNEL_ON_H, on >> 8 );
-//    i2c->i2cWrite( ALLCHANNEL_OFF_L, off & 0xFF );
-//    i2c->i2cWrite( ALLCHANNEL_OFF_H, off >> 8 );
-//}
+}
+
+void PWM::setPWM( int channel, int on, int off ) {
+
+    i2c->i2cWrite( CHANNEL0_ON_L + (4 * channel), on & 0xFF );
+    i2c->i2cWrite( CHANNEL0_ON_H + (4 * channel), on >> 8 );
+    i2c->i2cWrite( CHANNEL0_OFF_L + (4 * channel), off & 0xFF );
+    i2c->i2cWrite( CHANNEL0_OFF_H + (4 * channel), off >> 8 );
+}
+
+void PWM::setPWMAll( int on, int off ) {
+
+    i2c->i2cWrite( ALLCHANNEL_ON_L, on & 0xFF );
+    i2c->i2cWrite( AllCHANNEL_ON_H, on >> 8 );
+    i2c->i2cWrite( ALLCHANNEL_OFF_L, off & 0xFF );
+    i2c->i2cWrite( ALLCHANNEL_OFF_H, off >> 8 );
+}
 
 
 ////DCM::DCM( hardware board, int motor ) {
@@ -159,7 +178,8 @@ hardware::hardware() {
 #endif  // USE_HARDWARE
 
     i2c = new I2C( 0x6F );
-
+    pwm = new PWM( i2c );
+    pwm->setPWMFrequency( 1600 );
 
 }
 
