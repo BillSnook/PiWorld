@@ -2,7 +2,7 @@
 #define MOTOR_H
 
 
-//#define USE_MOTOR
+#define USE_MOTOR
 
 #ifdef USE_MOTOR
 

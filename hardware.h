@@ -2,7 +2,7 @@
 #define HARDWARE_H
 
 
-//#define USE_HARDWARE
+#define USE_HARDWARE
 
 #ifdef USE_HARDWARE
 

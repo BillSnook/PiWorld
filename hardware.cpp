@@ -19,6 +19,10 @@ I2C::I2C(int addr) {
 
     debug = false;
     address = addr;
+
+#ifdef USE_HARDWARE
+    device = wiringPiI2CSetup( addr );
+#endif  // USE_HARDWARE
 }
 
 int I2C::i2cRead(int reg) {
@@ -188,7 +192,6 @@ bool hardware::setupForDCMotors() {
 
     motorsSetup = true;
     return motorsSetup;
-    return true;
 }
 
 bool hardware::resetForDCMotors() {
