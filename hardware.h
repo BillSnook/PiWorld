@@ -2,7 +2,7 @@
 #define HARDWARE_H
 
 
-#define USE_HARDWARE
+//#define USE_HARDWARE
 
 #ifdef USE_HARDWARE
 
@@ -11,7 +11,6 @@
 #include <wiringPiI2C.h>
 
 #endif  // USE_HARDWARE
-
 
 
 class I2C {
@@ -36,6 +35,52 @@ public:
 
 class PWM {
 
+    // Addresses
+#define MODE1                   0x00
+#define MODE2                   0x01
+#define SUBADR1                 0x02
+#define SUBADR2                 0x03
+#define SUBADR3                 0x04
+#define PRESCALE                0xFE
+
+#define CHANNEL0_ON_L           0x06
+#define CHANNEL0_ON_H           0x07
+#define CHANNEL0_OFF_L          0x08
+#define CHANNEL0_OFF_H          0x09
+
+#define ALLCHANNEL_ON_L         0xFA
+#define AllCHANNEL_ON_H         0xFB
+#define ALLCHANNEL_OFF_L        0xFC
+#define ALLCHANNEL_OFF_H        0xFD
+
+    // Bits
+#define RESTART                 0x80
+#define SLEEP                   0x10
+#define ALLCALL                 0x01
+#define INVRT                   0x10
+#define OUTDRV                  0x04
+
+#define PWM_RESOLUTION          4096.0
+#define PWM_COUNT               4096
+
+
+#define M1Fw                    10
+#define M1Rv                    9
+#define M1En                    8
+
+#define M2Fw                    11
+#define M2Rv                    12
+#define M2En                    13
+
+#define M3Fw                    4
+#define M3Rv                    3
+#define M3En                    2
+
+#define M4Fw                    5
+#define M4Rv                    6
+#define M4En                    7
+
+
 public:
     explicit PWM( I2C *i2cBus );
 
@@ -46,6 +91,7 @@ public:
     void setPWMFrequency( int freq );
     void setPWM( int channel, int on, int off );
     void setPWMAll( int on, int off );
+    int getPWMResolution();
 };
 
 ////class DCM {
@@ -75,8 +121,11 @@ public:
     bool setupForDCMotors();
     bool resetForDCMotors();
 
-//    int setPin( int pin, int value );
-//    int getMotor( int motor );
+    void setPin( int pin, int value );
+    void setPWM( int pin, int value );
+
+    void setMtrDirSpd(int motor, int direction , int speed);
+    void setMtrSpd(int motor, int speed);
 
 };
 

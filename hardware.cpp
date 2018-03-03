@@ -74,30 +74,6 @@ int I2C::i2cWriteReg16(int reg, int data) {
 #endif  // USE_HARDWARE
 }
 
-// Addresses
-#define MODE1                   0x00
-#define MODE2                   0x01
-#define SUBADR1                 0x02
-#define SUBADR2                 0x03
-#define SUBADR3                 0x04
-#define PRESCALE                0xFE
-
-#define CHANNEL0_ON_L           0x06
-#define CHANNEL0_ON_H           0x07
-#define CHANNEL0_OFF_L          0x08
-#define CHANNEL0_OFF_H          0x09
-
-#define ALLCHANNEL_ON_L         0xFA
-#define AllCHANNEL_ON_H         0xFB
-#define ALLCHANNEL_OFF_L        0xFC
-#define ALLCHANNEL_OFF_H        0xFD
-
-// Bits
-#define RESTART                 0x80
-#define SLEEP                   0x10
-#define ALLCALL                 0x01
-#define INVRT                   0x10
-#define OUTDRV                  0x04
 
 PWM::PWM( I2C *i2cBus ) {
 
@@ -127,7 +103,7 @@ PWM::PWM( I2C *i2cBus ) {
 void PWM::setPWMFrequency( int freq ) {
 
     int prescaleval = 25000000.0;           // Nominal clock freq 25MHz
-    prescaleval /= 4096.0;                  // 12-bit
+    prescaleval /= PWM_RESOLUTION;          // 12-bit
     prescaleval /= float( freq );
     prescaleval -= 1.0;                     // For averaging
 
@@ -135,7 +111,7 @@ void PWM::setPWMFrequency( int freq ) {
     float prescale = floor(prescaleval + 0.5);
 
     int oldmode = i2c->i2cRead( MODE1 );
-    int newmode = ( oldmode & 0x7F ) | 0x10;  // sleep
+    int newmode = ( oldmode & 0x7F ) | SLEEP;  // sleep
     i2c->i2cWrite( MODE1, newmode );             // go to sleep
     i2c->i2cWrite( PRESCALE, int(floor(prescale)) );
     i2c->i2cWrite( MODE1, oldmode );
@@ -158,6 +134,10 @@ void PWM::setPWMAll( int on, int off ) {
     i2c->i2cWrite( ALLCHANNEL_OFF_H, off >> 8 );
 }
 
+int PWM::getPWMResolution() {
+
+    return PWM_RESOLUTION;
+}
 
 ////DCM::DCM( hardware board, int motor ) {
 
@@ -205,63 +185,24 @@ bool hardware::resetForDCMotors() {
     return motorsSetup;
 }
 
+void hardware::setPin( int pin, int value ) {
 
-//int hardware::getI2CReg( int reg ) {
+    if ( ( pin < 0 ) || ( pin > 15 ) ) {
+        return;
+    }
+    if ( value == 0 ) {
+        pwm->setPWM( pin, 0, PWM_COUNT );
+    }
+    if ( value == 1 ) {
+        pwm->setPWM( pin, PWM_COUNT, 0 );
+    }
+    return;
+}
 
-//    int rdValue = 0;
-//#ifdef USE_HARDWARE
-//    rdValue = wiringPiI2CReadReg16 (pi2c, reg) ;	// On
-//#endif  // USE_HARDWARE
-//    return rdValue;
-//}
+void hardware::setPWM( int pin, int value ) {
 
-//void hardware::putI2CReg( int reg, int newValue ) {
-
-//#ifdef USE_HARDWARE
-//    wiringPiI2CWriteReg16 (pi2c, reg, newValue);
-//#endif  // USE_HARDWARE
-//}
-
-//char *hardware::getUPS2() {
-
-//    char *statsV = (char *)valloc( 128 );
-//    char statsC[64];
-
-//#ifdef USE_HARDWARE
-//    pi2c = wiringPiI2CSetup( ADRS );
-
-//    int v = getI2CReg( VREG );
-//    int lo = (v >> 8) & 0x00FF;
-//    int hi = (v << 8) & 0xFF00;
-//    v = hi + lo;
-//    sprintf( statsV, "%fV ",(((float)v)* 78.125 / 1000000.0));
-
-//    int c = getI2CReg( CREG );
-//    close( pi2c );
-
-//    lo = (c >> 8) & 0x00FF;
-//    hi = (c << 8) & 0xFF00;
-//    c = hi + lo;
-//    sprintf( statsC, "%f%%\n",(((float)c) / 256.0));
-//    strcat( statsV, statsC );
-//#endif // USE_HARDWARE
-
-//    return statsV;
-//}
-
-//void hardware::setPin( int pin, int value ) {
-
-//    if ( ( pin < 0 ) || ( pin > 15 ) ) {
-//        return;
-//    }
-//    if ( value == 0 ) {
-
-//    }
-//    if ( value == 1 ) {
-
-//    }
-//    return;
-//}
+    pwm->setPWM( pin, value, PWM_COUNT - value );
+}
 
 //DCM hardware::getMotor( int motor ) {
 //    if ( ( motor < 1 ) || ( motor > 4 ) ) {
@@ -269,3 +210,40 @@ bool hardware::resetForDCMotors() {
 //    }
 //    return motors[motor]
 //}
+
+void hardware::setMtrDirSpd(int motor, int direction , int speed) {
+
+    fprintf(stderr,"setMtrDirSpd m %d, d: %s, s: %d\n", motor, direction ? "f" : "r", speed);
+    if ( motor == 1 ) {
+        if ( direction == 1 ) {
+            setPin( M1Fw, 1 );
+            setPin( M1Rv, 0 );
+        } else {
+            setPin( M1Fw, 0 );
+            setPin( M1Rv, 1 );
+        }
+        setPWM( M1En, speed * 16 );
+    }
+    if ( motor == 2 ) {
+        if ( direction == 1 ) {
+            setPin( M2Fw, 1 );
+            setPin( M2Rv, 0 );
+        } else {
+            setPin( M2Fw, 0 );
+            setPin( M2Rv, 1 );
+        }
+        setPWM( M2En, speed * 16 );
+    }
+}
+
+void hardware::setMtrSpd(int motor, int speed) {
+
+    fprintf(stderr,"setMtrSpd m %d, s: %d\n", motor, speed);
+    if ( motor == 1 ) {
+        setPWM( M1En, speed * 16 );
+    }
+    if ( motor == 2 ) {
+        setPWM( M2En, speed * 16 );
+    }
+}
+
