@@ -2,7 +2,7 @@
 #define HARDWARE_H
 
 
-//#define USE_HARDWARE
+#define USE_HARDWARE
 
 #ifdef USE_HARDWARE
 
@@ -64,8 +64,8 @@ class PWM {
 #define PWM_COUNT               4096
 
 
-#define M1Fw                    10
-#define M1Rv                    9
+#define M1Fw                    9
+#define M1Rv                    10
 #define M1En                    8
 
 #define M2Fw                    11

@@ -178,6 +178,12 @@ bool hardware::resetForDCMotors() {
 
 #ifdef USE_HARDWARE
 #endif  // USE_HARDWARE
+    setPWM( M1En, 0 );
+    setPin( M1Fw, 0 );
+    setPin( M1Rv, 0 );
+    setPWM( M2En, 0 );
+    setPin( M2Fw, 0 );
+    setPin( M2Rv, 0 );
 
     delete i2c;
 
