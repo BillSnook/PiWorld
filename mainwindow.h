@@ -22,7 +22,7 @@ public:
 private:
     Ui::MainWindow  *ui;
     commPi          *piPtr;
-    hardware        *hw;
+    hardware        *hw = nullptr;
 
     bool connected;
     bool commMode;

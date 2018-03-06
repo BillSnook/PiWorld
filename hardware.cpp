@@ -8,13 +8,7 @@
 #include <math.h>
 
 
-#define VREG 2
-#define CREG 4
-#define BUFSIZE	16
-#define DEV "/dev/i2c-1"
-#define ADRS 0x36
-
-
+//  MARK: i2c interface read and write support
 I2C::I2C(int addr) {
 
     debug = false;
@@ -30,6 +24,8 @@ int I2C::i2cRead(int reg) {
     int rdValue = 0;
 #ifdef USE_HARDWARE
     rdValue = wiringPiI2CReadReg8 ( device, reg ) ;	// Read 8 bits from register reg on device
+#else
+    rdValue = reg;
 #endif  // USE_HARDWARE
     return rdValue;
 }
@@ -39,6 +35,8 @@ int I2C::i2cReadReg8(int reg) {
     int rdValue = 0;
 #ifdef USE_HARDWARE
     rdValue = wiringPiI2CReadReg8 ( device, reg ) ;	// Read 8 bits from register reg on device
+#else
+    rdValue = reg;
 #endif  // USE_HARDWARE
     return rdValue;
 }
@@ -48,6 +46,8 @@ int I2C::i2cReadReg16(int reg) {
     int rdValue = 0;
 #ifdef USE_HARDWARE
     rdValue = wiringPiI2CReadReg16 ( device, reg ) ;	// Read 16 bits from register reg on device
+#else
+    rdValue = reg;
 #endif  // USE_HARDWARE
     return rdValue;
 }
@@ -56,14 +56,18 @@ int I2C::i2cReadReg16(int reg) {
 int I2C::i2cWrite(int reg, int data) {
 
 #ifdef USE_HARDWARE
-    wiringPiI2CWriteReg8(device, reg, data);
+    return wiringPiI2CWriteReg8(device, reg, data);
+#else
+    return reg + data;
 #endif  // USE_HARDWARE
 }
 
 int I2C::i2cWriteReg8(int reg, int data) {
 
 #ifdef USE_HARDWARE
-    wiringPiI2CWriteReg8(device, reg, data);
+    return wiringPiI2CWriteReg8(device, reg, data);
+#else
+    return reg + data;
 #endif  // USE_HARDWARE
 }
 
@@ -71,14 +75,17 @@ int I2C::i2cWriteReg16(int reg, int data) {
 
 #ifdef USE_HARDWARE
     wiringPiI2CWriteReg16(device, reg, data);
+#else
+    return reg + data;
 #endif  // USE_HARDWARE
 }
 
 
-PWM::PWM( I2C *i2cBus ) {
+PWM::PWM( int addr ) {
 
     debug = false;
-    i2c = i2cBus;
+    address = addr;
+    i2c = new I2C( addr );
     setPWMAll( 0, 0 );                  // Clear all to 0
     i2c->i2cWrite( MODE2, OUTDRV );
     i2c->i2cWrite( MODE1, ALLCALL );
@@ -161,14 +168,12 @@ hardware::hardware() {
     fprintf( stderr, "Pi version: %d\n", setupResult );
 #endif  // USE_HARDWARE
 
-    i2c = new I2C( 0x6F );
-    pwm = new PWM( i2c );
+    pwm = new PWM( 0x6F );          // Default for Motor Hat PWM chip
     pwm->setPWMFrequency( 1600 );
 
 }
 
 bool hardware::setupForDCMotors() {
-
 
     motorsSetup = true;
     return motorsSetup;
@@ -176,16 +181,12 @@ bool hardware::setupForDCMotors() {
 
 bool hardware::resetForDCMotors() {
 
-#ifdef USE_HARDWARE
-#endif  // USE_HARDWARE
     setPWM( M1En, 0 );
     setPin( M1Fw, 0 );
     setPin( M1Rv, 0 );
     setPWM( M2En, 0 );
     setPin( M2Fw, 0 );
     setPin( M2Rv, 0 );
-
-    delete i2c;
 
     motorsSetup = false;
     return motorsSetup;

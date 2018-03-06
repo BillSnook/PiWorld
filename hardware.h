@@ -2,7 +2,7 @@
 #define HARDWARE_H
 
 
-#define USE_HARDWARE
+//#define USE_HARDWARE
 
 #ifdef USE_HARDWARE
 
@@ -64,9 +64,10 @@ class PWM {
 #define PWM_COUNT               4096
 
 
-#define M1Fw                    9
-#define M1Rv                    10
-#define M1En                    8
+// Address of PWM channels - Fw and Rv expect their on and off values to be 0 to PWM_COUNT
+#define M1Fw                    9       // Motor 1 Forward enable PWM channel
+#define M1Rv                    10      // Motor 1 Reverse enable - both 0 is safe off
+#define M1En                    8       // Motor 1 enable, values from 0 to PWM_COUNT
 
 #define M2Fw                    11
 #define M2Rv                    12
@@ -82,7 +83,7 @@ class PWM {
 
 
 public:
-    explicit PWM( I2C *i2cBus );
+    explicit PWM( int addr );
 
     bool    debug;
     int     address;             // I2C address

@@ -55,7 +55,7 @@ void MainWindow::buttonSetup() {
 
 void MainWindow::connectSetup() {
 
-    ui->talkAddress->setText( "develop31" ); // Initial setting
+    ui->talkAddress->setText( "develop32" ); // Initial setting
     if ( nullptr == piPtr ) {
         piPtr = new commPi();
     }
@@ -93,12 +93,14 @@ void MainWindow::sliderChanged1(int newValue) {
 
     ui->messageTextLine->setText( QString::number(newValue) );
     speed[0] = newValue;
+    hw->setMtrSpd( 1, newValue );               // Motor 1, set value 0 255
 }
 
 void MainWindow::sliderChanged2(int newValue) {
 
     ui->messageTextLine->setText( QString::number(newValue) );
     speed[1] = newValue;
+    hw->setMtrSpd( 2, newValue );               // Motor 2, set value 0 255
 }
 
 void MainWindow::sliderChanged3(int newValue) {
@@ -208,9 +210,9 @@ void MainWindow::slotConnectClicked(bool checked) {
     } else {
         if (motorMode) {                        // Setup for motor test
             if (checked) {
-//                if ( nullptr == hw ) {
+                if ( nullptr == hw ) {
                     hw = new hardware();
-//                }
+                }
                 connected = hw->setupForDCMotors();
                 ui->connectButton->setText("Setting Up");
                 ui->talkAddress->setText( "Test Setup" ); // ?
@@ -279,15 +281,15 @@ void MainWindow::slotBlinkClicked(bool checked) {
         char *resp = piPtr->sendMessage( "blink\n" );
         ui->responseDisplay->setPlainText(resp);
     }
-//    if (motorMode) {
-//        if ( checked ) {    // Turn on
-//            hw->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
-//            hw->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
-//        } else {            // Turn off
-//            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
-//            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
-//        }
-//    }
+    if (motorMode) {
+        if ( checked ) {    // Turn on
+            hw->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
+            hw->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
+        } else {            // Turn off
+            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
+            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
+        }
+    }
 }
 
 void MainWindow::slotStopClicked(bool checked) {
@@ -332,15 +334,15 @@ void MainWindow::m2rv(bool checked) {
 
 void MainWindow::m3rv(bool checked) {
 
-//    if (motorMode) {
-//        if ( checked ) {    // Turn on
-//            hw->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverses, speed
-//            hw->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
-//        } else {            // Turn off
-//            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
-//            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
-//        }
-//    }
+    if (motorMode) {
+        if ( checked ) {    // Turn on
+            hw->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverse, speed
+            hw->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
+        } else {            // Turn off
+            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
+            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
+        }
+    }
 }
 
 void MainWindow::m4rv(bool checked) {
