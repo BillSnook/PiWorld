@@ -72,19 +72,19 @@ void MainWindow::connectSetup() {
 
 void MainWindow::sliderSetup() {
 
-    ui->m1Slider->setRange( 0, 100 );
+    ui->m1Slider->setRange( 0, SLIDER_MAX );
     ui->m1Slider->show();
     connect(ui->m1Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged1(int)));
 
-    ui->m2Slider->setRange( 0, 100 );
+    ui->m2Slider->setRange( 0, SLIDER_MAX );
     ui->m2Slider->show();
     connect(ui->m2Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged2(int)));
 
-    ui->m3Slider->setRange( 0, 100 );
+    ui->m3Slider->setRange( 0, SLIDER_MAX );
     ui->m3Slider->show();
     connect(ui->m3Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged3(int)));
 
-    ui->m4Slider->setRange( 0, 100 );
+    ui->m4Slider->setRange( 0, SLIDER_MAX );
     ui->m4Slider->show();
     connect(ui->m4Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged4(int)));
 }
@@ -107,6 +107,8 @@ void MainWindow::sliderChanged3(int newValue) {
 
     ui->messageTextLine->setText( QString::number(newValue) );
     speed[2] = newValue;
+    hw->setMtrSpd( 1, newValue );               // Motor 1, set value 0 255
+    hw->setMtrSpd( 2, newValue );               // Motor 2, set value 0 255
 }
 
 void MainWindow::sliderChanged4(int newValue) {

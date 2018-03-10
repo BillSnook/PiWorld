@@ -4,6 +4,9 @@
 
 //#define USE_HARDWARE
 
+
+#include "common.h"
+
 #ifdef USE_HARDWARE
 
 #include <wiringPi.h>
@@ -60,14 +63,11 @@ class PWM {
 #define INVRT                   0x10
 #define OUTDRV                  0x04
 
-#define PWM_RESOLUTION          4096.0
-#define PWM_COUNT               4096
 
-
-// Address of PWM channels - Fw and Rv expect their on and off values to be 0 to PWM_COUNT
+// Address of PWM channels - Fw and Rv expect their on and off values to be 0 to PWM_MAX
 #define M1Fw                    9       // Motor 1 Forward enable PWM channel
 #define M1Rv                    10      // Motor 1 Reverse enable - both 0 is safe off
-#define M1En                    8       // Motor 1 enable, values from 0 to PWM_COUNT
+#define M1En                    8       // Motor 1 enable, values from 0 to PWM_MAX
 
 #define M2Fw                    11
 #define M2Rv                    12

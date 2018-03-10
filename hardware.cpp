@@ -199,8 +199,7 @@ void hardware::setPin( int pin, int value ) {
     }
     if ( value == 0 ) {
         pwm->setPWM( pin, 0, PWM_COUNT );
-    }
-    if ( value == 1 ) {
+    } else {
         pwm->setPWM( pin, PWM_COUNT, 0 );
     }
     return;
@@ -229,7 +228,7 @@ void hardware::setMtrDirSpd(int motor, int direction , int speed) {
             setPin( M1Fw, 0 );
             setPin( M1Rv, 1 );
         }
-        setPWM( M1En, speed * 16 );
+        setPWM( M1En, speed * SPEED_ADJUSTMENT );
     }
     if ( motor == 2 ) {
         if ( direction == 1 ) {
@@ -239,7 +238,7 @@ void hardware::setMtrDirSpd(int motor, int direction , int speed) {
             setPin( M2Fw, 0 );
             setPin( M2Rv, 1 );
         }
-        setPWM( M2En, speed * 16 );
+        setPWM( M2En, speed * SPEED_ADJUSTMENT );
     }
 }
 
@@ -247,10 +246,10 @@ void hardware::setMtrSpd(int motor, int speed) {
 
     fprintf(stderr,"setMtrSpd m %d, s: %d\n", motor, speed);
     if ( motor == 1 ) {
-        setPWM( M1En, speed * 16 );
+        setPWM( M1En, speed * SPEED_ADJUSTMENT );
     }
     if ( motor == 2 ) {
-        setPWM( M2En, speed * 16 );
+        setPWM( M2En, speed * SPEED_ADJUSTMENT );
     }
 }
 

@@ -22,7 +22,8 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
             commpi.h \
 #            motor.h \
-            hardware.h
+            hardware.h \
+    common.h
 
 FORMS    += mainwindow.ui
 
