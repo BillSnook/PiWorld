@@ -2,7 +2,7 @@
 #define HARDWARE_H
 
 
-//#define USE_HARDWARE
+#define USE_HARDWARE
 
 
 #include "common.h"
@@ -114,7 +114,9 @@ public:
     I2C     *i2c;
     PWM     *pwm;
 
-    bool    motorsSetup;
+    bool    motor1Setup;
+    bool    motor2Setup;
+
     int     i2cAddress;
     int     i2cFrequency;
 

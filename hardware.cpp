@@ -74,7 +74,7 @@ int I2C::i2cWriteReg8(int reg, int data) {
 int I2C::i2cWriteReg16(int reg, int data) {
 
 #ifdef USE_HARDWARE
-    wiringPiI2CWriteReg16(device, reg, data);
+    return wiringPiI2CWriteReg16(device, reg, data);
 #else
     return reg + data;
 #endif  // USE_HARDWARE
@@ -157,7 +157,8 @@ int PWM::getPWMResolution() {
 
 hardware::hardware() {
 
-    motorsSetup = false;
+    motor1Setup = false;
+    motor2Setup = false;
 
 #ifdef USE_HARDWARE
     int setupResult = wiringPiSetup();
@@ -171,12 +172,12 @@ hardware::hardware() {
     pwm = new PWM( 0x6F );          // Default for Motor Hat PWM chip
     pwm->setPWMFrequency( 1600 );
 
+    fprintf( stderr, "Speed adjustment: %d\n", SPEED_ADJUSTMENT );
 }
 
 bool hardware::setupForDCMotors() {
 
-    motorsSetup = true;
-    return motorsSetup;
+    return true;
 }
 
 bool hardware::resetForDCMotors() {
@@ -188,8 +189,9 @@ bool hardware::resetForDCMotors() {
     setPin( M2Fw, 0 );
     setPin( M2Rv, 0 );
 
-    motorsSetup = false;
-    return motorsSetup;
+    motor2Setup = false;
+    motor1Setup = false;
+    return true;
 }
 
 void hardware::setPin( int pin, int value ) {
@@ -228,6 +230,7 @@ void hardware::setMtrDirSpd(int motor, int direction , int speed) {
             setPin( M1Fw, 0 );
             setPin( M1Rv, 1 );
         }
+        motor1Setup = true;
         setPWM( M1En, speed * SPEED_ADJUSTMENT );
     }
     if ( motor == 2 ) {
@@ -238,6 +241,7 @@ void hardware::setMtrDirSpd(int motor, int direction , int speed) {
             setPin( M2Fw, 0 );
             setPin( M2Rv, 1 );
         }
+        motor2Setup = true;
         setPWM( M2En, speed * SPEED_ADJUSTMENT );
     }
 }
@@ -245,10 +249,10 @@ void hardware::setMtrDirSpd(int motor, int direction , int speed) {
 void hardware::setMtrSpd(int motor, int speed) {
 
     fprintf(stderr,"setMtrSpd m %d, s: %d\n", motor, speed);
-    if ( motor == 1 ) {
+    if ( ( motor == 1 ) && motor1Setup ) {
         setPWM( M1En, speed * SPEED_ADJUSTMENT );
     }
-    if ( motor == 2 ) {
+    if ( ( motor == 2 ) && motor2Setup ) {
         setPWM( M2En, speed * SPEED_ADJUSTMENT );
     }
 }

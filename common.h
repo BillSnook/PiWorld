@@ -7,7 +7,6 @@
 #define PWM_MAX                 4095
 
 #define SLIDER_RESOLUTION       64
-#define SLIDER_MAX              ( SLIDER_RESOLUTION - 1 )
 
 #define SPEED_ADJUSTMENT        ( PWM_COUNT / SLIDER_RESOLUTION )
 
