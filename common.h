@@ -8,7 +8,6 @@
 
 #define SLIDER_RESOLUTION       64
 
-#define SPEED_ADJUSTMENT        ( PWM_COUNT / SLIDER_RESOLUTION )
-
+#define SPEED_ADJUSTMENT        64
 
 #endif // COMMON_H

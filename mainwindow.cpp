@@ -108,8 +108,8 @@ void MainWindow::sliderChanged3(int newValue) {
     ui->messageTextLine->setText( QString::number(newValue) );
     speed[0] = newValue;
     speed[1] = newValue;
-//    hw->setMtrSpd( 1, newValue );               // Motor 1, set value 0 64s
-//    hw->setMtrSpd( 2, newValue );               // Motor 2, set value 0 64
+    hw->setMtrSpd( 1, newValue );               // Motor 1, set value 0 64
+    hw->setMtrSpd( 2, newValue );               // Motor 2, set value 0 64
 }
 
 void MainWindow::sliderChanged4(int newValue) {
