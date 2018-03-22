@@ -19,6 +19,12 @@ MainWindow::MainWindow(QWidget *parent) :
     buttonSetup();
 
     slotMotorMenu();    // Or slotCommMenu(); // if we want to start with that as default
+
+    // Eventually we will get these from a file
+    for ( int i = 0; i < SPEED_ARRAY; i++ ) {
+        speed[i].left = 0;
+        speed[i].right = 0;
+    }
 }
 
 void MainWindow::menuSetup() {
@@ -36,21 +42,25 @@ void MainWindow::buttonSetup() {
     ui->helloButton->setCheckable(true);
     ui->blinkButton->setCheckable(true);
     ui->stopButton->setCheckable(true);
-    ui->okButton_2->setCheckable(true);
-    ui->helloButton_2->setCheckable(true);
-    ui->blinkButton_2->setCheckable(true);
-    ui->stopButton_2->setCheckable(true);
+    ui->okButton_2->setCheckable(false);
+    ui->helloButton_2->setCheckable(false);
+    ui->blinkButton_2->setCheckable(false);
+    ui->stopButton_2->setCheckable(false);
+    ui->t1->setCheckable(false);
+    ui->t2->setCheckable(false);
+    ui->t3->setCheckable(false);
+    ui->t4->setCheckable(false);
 
     connect(ui->connectButton, SIGNAL (clicked(bool)), this, SLOT (slotConnectClicked(bool)));
-    connect(ui->okButton, SIGNAL (clicked(bool)), this, SLOT (slotOKClicked(bool)));
-    connect(ui->helloButton, SIGNAL (clicked(bool)), this, SLOT (slotHelloClicked(bool)));
-    connect(ui->blinkButton, SIGNAL (clicked(bool)), this, SLOT (slotBlinkClicked(bool)));
-    connect(ui->stopButton, SIGNAL (clicked(bool)), this, SLOT (slotStopClicked(bool)));
+    connect(ui->okButton, SIGNAL (clicked(bool)), this, SLOT (b1l(bool)));
+    connect(ui->helloButton, SIGNAL (clicked(bool)), this, SLOT (b2l(bool)));
+    connect(ui->blinkButton, SIGNAL (clicked(bool)), this, SLOT (b3l(bool)));
+    connect(ui->stopButton, SIGNAL (clicked(bool)), this, SLOT (b4l(bool)));
 
-    connect(ui->okButton_2, SIGNAL (clicked(bool)), this, SLOT (m1rv(bool)));
-    connect(ui->helloButton_2, SIGNAL (clicked(bool)), this, SLOT (m2rv(bool)));
-    connect(ui->blinkButton_2, SIGNAL (clicked(bool)), this, SLOT (m3rv(bool)));
-    connect(ui->stopButton_2, SIGNAL (clicked(bool)), this, SLOT (m4rv(bool)));
+    connect(ui->okButton_2, SIGNAL (clicked(bool)), this, SLOT (b1r(bool)));
+    connect(ui->helloButton_2, SIGNAL (clicked(bool)), this, SLOT (b2r(bool)));
+    connect(ui->blinkButton_2, SIGNAL (clicked(bool)), this, SLOT (b3r(bool)));
+    connect(ui->stopButton_2, SIGNAL (clicked(bool)), this, SLOT (b4r(bool)));
 }
 
 void MainWindow::connectSetup() {
@@ -80,7 +90,7 @@ void MainWindow::sliderSetup() {
     ui->m2Slider->show();
     connect(ui->m2Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged2(int)));
 
-    ui->m3Slider->setRange( 0, SLIDER_RESOLUTION );
+    ui->m3Slider->setRange( 0, 16 );
     ui->m3Slider->show();
     connect(ui->m3Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged3(int)));
 
@@ -92,22 +102,22 @@ void MainWindow::sliderSetup() {
 void MainWindow::sliderChanged1(int newValue) {
 
     ui->messageTextLine->setText( QString::number(newValue) );
-    speed[0] = newValue;
+    slider[0] = newValue;
 //    hw->setMtrSpd( 1, newValue );               // Motor 1, set value 0 64
 }
 
 void MainWindow::sliderChanged2(int newValue) {
 
     ui->messageTextLine->setText( QString::number(newValue) );
-    speed[1] = newValue;
+    slider[1] = newValue;
 //    hw->setMtrSpd( 2, newValue );               // Motor 2, set value 0 64
 }
 
 void MainWindow::sliderChanged3(int newValue) {
 
     ui->messageTextLine->setText( QString::number(newValue) );
-    speed[0] = newValue;
-    speed[1] = newValue;
+    slider[0] = newValue;
+    slider[1] = newValue;
     hw->setMtrSpd( 1, newValue );               // Motor 1, set value 0 64
     hw->setMtrSpd( 2, newValue );               // Motor 2, set value 0 64
 }
@@ -115,7 +125,7 @@ void MainWindow::sliderChanged3(int newValue) {
 void MainWindow::sliderChanged4(int newValue) {
 
     ui->messageTextLine->setText( QString::number(newValue) );
-    speed[3] = newValue;
+    slider[3] = newValue;
 }
 
 
@@ -142,6 +152,10 @@ void MainWindow::slotCommMenu() {
     ui->helloButton_2->hide();
     ui->blinkButton_2->hide();
     ui->stopButton_2->hide();
+    ui->t1->hide();
+    ui->t2->hide();
+    ui->t3->hide();
+    ui->t4->hide();
 
     ui->m1Slider->hide();
     ui->m2Slider->hide();
@@ -159,23 +173,32 @@ void MainWindow::slotMotorMenu() {
     ui->connectButton->setText("Setup IO");
     ui->connectBox->show();
 
-    ui->okButton->setText("M1 Forward");
-    ui->helloButton->setText("M2 Forward");
-    ui->blinkButton->setText("M3 Forward");
-    ui->stopButton->setText("M4 Forward");
-    ui->okButton_2->setText("M1 Reverse");
-    ui->helloButton_2->setText("M2 Reverse");
-    ui->blinkButton_2->setText("M3 Reverse");
-    ui->stopButton_2->setText("M4 Reverse");
+    ui->okButton->setText("left -");
+    ui->helloButton->setText("right -");
+    ui->blinkButton->setText("speed -");
+    ui->stopButton->setText("-");
+    ui->okButton_2->setText("+ left");
+    ui->helloButton_2->setText("+ right");
+    ui->blinkButton_2->setText("+ speed");
+    ui->stopButton_2->setText("+");
+    ui->t1->setText("Start");
+    ui->t2->setText("Stop");
+    ui->t3->setText("Accept");
+    ui->t4->setText("Reverse");
 
     ui->okButton_2->show();
     ui->helloButton_2->show();
     ui->blinkButton_2->show();
     ui->stopButton_2->show();
+    ui->t1->show();
+    ui->t2->show();
+    ui->t3->show();
+    ui->t4->show();
 
-    for ( int i = 0; i < 4; i++ ) {
-        speed[i] = 0;
-    }
+    slider[0] = speed[0].left;
+    slider[1] = speed[0].right;
+    slider[2] = 0;
+    slider[3] = 0;
 
     sliderSetup();
 }
@@ -242,7 +265,7 @@ void MainWindow::slotConnectClicked(bool checked) {
     }
 }
 
-void MainWindow::slotOKClicked(bool checked) {
+void MainWindow::b1l(bool checked) {
 
     if (commMode ) {
         ui->okButton->setChecked(!checked);
@@ -251,15 +274,16 @@ void MainWindow::slotOKClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        if ( checked ) {    // Turn on
-            hw->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
-        } else {            // Turn off
-            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
+        ui->okButton->setChecked(false);
+        if ( slider[0] > 0 ) {
+            --slider[0];
+            ui->m1Slider->setValue( slider[0] );
         }
+        ui->messageTextLine->setText( QString::number(slider[0]) );
     }
 }
 
-void MainWindow::slotHelloClicked(bool checked) {
+void MainWindow::b2l(bool checked) {
 
     if (commMode ) {
         ui->helloButton->setChecked(!checked);
@@ -268,15 +292,16 @@ void MainWindow::slotHelloClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        if ( checked ) {    // Turn on
-            hw->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
-        } else {            // Turn off
-            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
+        ui->helloButton->setChecked(false);
+        if ( slider[1] > 0 ) {
+            --slider[1];
+            ui->m2Slider->setValue( slider[1] );
         }
+        ui->messageTextLine->setText( QString::number(slider[1]) );
     }
 }
 
-void MainWindow::slotBlinkClicked(bool checked) {
+void MainWindow::b3l(bool checked) {
 
     if (commMode ) {
         ui->blinkButton->setChecked(!checked);
@@ -285,17 +310,20 @@ void MainWindow::slotBlinkClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        if ( checked ) {    // Turn on
-            hw->setMtrDirSpd( 1, 1, speed[0] );  // Motor 1, forward, speed
-            hw->setMtrDirSpd( 2, 1, speed[1] );  // Motor 2, forward, speed
-        } else {            // Turn off
-            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
-            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
+        ui->blinkButton->setChecked(false);
+        if ( slider[2] > 0 ) {
+            --slider[2];
+            ui->m3Slider->setValue( slider[2] );
+            slider[0] = speed[slider[2]].left;
+            ui->m1Slider->setValue( slider[0] );
+            slider[1] = speed[slider[2]].right;
+            ui->m2Slider->setValue( slider[1] );
         }
+        ui->messageTextLine->setText( QString::number(slider[2]) );
     }
 }
 
-void MainWindow::slotStopClicked(bool checked) {
+void MainWindow::b4l(bool checked) {
 
     if (commMode ) {
         ui->stopButton->setChecked(!checked);
@@ -304,55 +332,85 @@ void MainWindow::slotStopClicked(bool checked) {
         ui->responseDisplay->setPlainText(resp);
     }
     if (motorMode) {
-        ui->m4Slider->setValue( 0 );
-//        if ( checked ) {
-//            hw->onPin(L4);
-//        } else {
-//            hw->offPin(L4);
-//        }
+        ui->stopButton->setChecked(false);
+        if ( slider[3] > 0 ) {
+            --slider[3];
+            ui->m4Slider->setValue( slider[3] );
+        }
+        ui->messageTextLine->setText( QString::number(slider[3]) );
     }
 }
 
-void MainWindow::m1rv(bool checked) {
+void MainWindow::b1r(bool checked) {
 
     if (motorMode) {
-        if ( checked ) {
-            hw->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverse, speed
-        } else {
-            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
+        ui->okButton->setChecked(false);
+        if ( slider[0] < SLIDER_RESOLUTION ) {
+            ++slider[0];
+            ui->m1Slider->setValue( slider[0] );
         }
+        ui->messageTextLine->setText( QString::number(slider[0]) );
     }
 }
 
-void MainWindow::m2rv(bool checked) {
+void MainWindow::b2r(bool checked) {
 
     if (motorMode) {
-        if ( checked ) {
-            hw->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
-        } else {
-            hw->setMtrSpd( 2, 0 );               // Motor 2, reverse, speed
+        ui->helloButton->setChecked(false);
+        if ( slider[1] < SLIDER_RESOLUTION ) {
+            ++slider[1];
+            ui->m2Slider->setValue( slider[1] );
         }
+        ui->messageTextLine->setText( QString::number(slider[1]) );
     }
 }
 
-void MainWindow::m3rv(bool checked) {
+void MainWindow::b3r(bool checked) {
 
     if (motorMode) {
-        if ( checked ) {    // Turn on
-            hw->setMtrDirSpd( 1, 0, speed[0] );  // Motor 1, reverse, speed
-            hw->setMtrDirSpd( 2, 0, speed[1] );  // Motor 2, reverse, speed
-        } else {            // Turn off
-            hw->setMtrSpd( 1, 0 );               // Motor 1, stop
-            hw->setMtrSpd( 2, 0 );               // Motor 2, stop
+        ui->blinkButton->setChecked(false);
+        if ( slider[2] < 16 ) {
+            ++slider[2];
+            ui->m3Slider->setValue( slider[2] );
+            slider[0] = speed[slider[2]].left;
+            ui->m1Slider->setValue( slider[0] );
+            slider[1] = speed[slider[2]].right;
+            ui->m2Slider->setValue( slider[1] );
         }
+        ui->messageTextLine->setText( QString::number(slider[2]) );
     }
 }
 
-void MainWindow::m4rv(bool checked) {
+void MainWindow::b4r(bool checked) {
 
-//    if (motorMode) {
-//        char *upsStats = hw->getUPS2();
-//        ui->responseDisplay->setPlainText(upsStats);
-//        free( upsStats );
-//    }
+    if (motorMode) {
+        ui->stopButton->setChecked(false);
+        if ( slider[3] < SLIDER_RESOLUTION ) {
+            ++slider[3];
+            ui->m4Slider->setValue( slider[3] );
+        }
+        ui->messageTextLine->setText( QString::number(slider[3]) );
+    }
+}
+
+void MainWindow::t1(bool checked) {
+
+    fprintf(stderr,"t1\n");
+}
+
+void MainWindow::t2(bool checked) {
+
+    fprintf(stderr,"t2\n");
+}
+
+void MainWindow::t3(bool checked) {
+
+    fprintf(stderr,"t3\n");
+    speed[slider[2]].left = slider[0];
+    speed[slider[2]].right = slider[1];
+}
+
+void MainWindow::t4(bool checked) {
+
+    fprintf(stderr,"t4\n");
 }

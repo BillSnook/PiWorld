@@ -65,7 +65,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>OK</string>
+       <string>left -</string>
       </property>
      </widget>
      <widget class="QPushButton" name="helloButton">
@@ -78,7 +78,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Hello</string>
+       <string>right -</string>
       </property>
      </widget>
      <widget class="QPushButton" name="blinkButton">
@@ -91,7 +91,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Blink</string>
+       <string>speed -</string>
       </property>
      </widget>
      <widget class="QPushButton" name="stopButton">
@@ -169,7 +169,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>OK</string>
+       <string>+ left</string>
       </property>
      </widget>
      <widget class="QPushButton" name="helloButton_2">
@@ -182,7 +182,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Hello</string>
+       <string>+ right</string>
       </property>
      </widget>
      <widget class="QPushButton" name="blinkButton_2">
@@ -195,7 +195,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Blink</string>
+       <string>+ speed</string>
       </property>
      </widget>
      <widget class="QPushButton" name="stopButton_2">
@@ -209,6 +209,58 @@
       </property>
       <property name="text">
        <string>Stop</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="t1">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>330</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Start</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="t4">
+      <property name="geometry">
+       <rect>
+        <x>450</x>
+        <y>330</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Reverse</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="t2">
+      <property name="geometry">
+       <rect>
+        <x>160</x>
+        <y>330</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Stop</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="t3">
+      <property name="geometry">
+       <rect>
+        <x>310</x>
+        <y>330</y>
+        <width>113</width>
+        <height>32</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Accept</string>
       </property>
      </widget>
     </widget>
@@ -301,9 +353,6 @@
   <action name="MotorTest">
    <property name="text">
     <string>Motor Test</string>
-   </property>
-   <property name="shortcutVisibleInContextMenu">
-    <bool>false</bool>
    </property>
   </action>
  </widget>
