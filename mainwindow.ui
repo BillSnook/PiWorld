@@ -107,7 +107,7 @@
        <string>Stop</string>
       </property>
      </widget>
-     <widget class="QSlider" name="m1Slider">
+     <widget class="QSlider" name="m0Slider">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -120,7 +120,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="m2Slider">
+     <widget class="QSlider" name="m1Slider">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -133,7 +133,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="m3Slider">
+     <widget class="QSlider" name="m2Slider">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -146,7 +146,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="m4Slider">
+     <widget class="QSlider" name="m3Slider">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -211,7 +211,7 @@
        <string>Stop</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="t1">
+     <widget class="QPushButton" name="t0">
       <property name="geometry">
        <rect>
         <x>20</x>
@@ -224,7 +224,7 @@
        <string>Start</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="t4">
+     <widget class="QPushButton" name="t3">
       <property name="geometry">
        <rect>
         <x>450</x>
@@ -237,7 +237,7 @@
        <string>Reverse</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="t2">
+     <widget class="QPushButton" name="t1">
       <property name="geometry">
        <rect>
         <x>160</x>
@@ -250,7 +250,7 @@
        <string>Stop</string>
       </property>
      </widget>
-     <widget class="QPushButton" name="t3">
+     <widget class="QPushButton" name="t2">
       <property name="geometry">
        <rect>
         <x>310</x>
