@@ -65,7 +65,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>OK</string>
+       <string>left -</string>
       </property>
      </widget>
      <widget class="QPushButton" name="helloButton">
@@ -78,7 +78,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Hello</string>
+       <string>right -</string>
       </property>
      </widget>
      <widget class="QPushButton" name="blinkButton">
@@ -91,7 +91,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Blink</string>
+       <string>speed -</string>
       </property>
      </widget>
      <widget class="QPushButton" name="stopButton">
@@ -169,7 +169,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>OK</string>
+       <string>+ left</string>
       </property>
      </widget>
      <widget class="QPushButton" name="helloButton_2">
@@ -182,7 +182,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Hello</string>
+       <string>+ right</string>
       </property>
      </widget>
      <widget class="QPushButton" name="blinkButton_2">
@@ -195,7 +195,7 @@
        </rect>
       </property>
       <property name="text">
-       <string>Blink</string>
+       <string>+ speed</string>
       </property>
      </widget>
      <widget class="QPushButton" name="stopButton_2">
@@ -353,9 +353,6 @@
   <action name="MotorTest">
    <property name="text">
     <string>Motor Test</string>
-   </property>
-   <property name="shortcutVisibleInContextMenu" stdset="0">
-    <bool>false</bool>
    </property>
   </action>
  </widget>

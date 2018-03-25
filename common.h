@@ -8,7 +8,7 @@
 
 #define SLIDER_RESOLUTION       64
 
-#define SPEED_ADJUSTMENT        ( PWM_COUNT / SLIDER_RESOLUTION )
+#define SPEED_ADJUSTMENT        32      // Half for now to solve crash if too high
 
 #define SPEED_ARRAY             16      // Number of distinct speeds we can select
 
@@ -18,5 +18,4 @@ struct speed_array {
     int left;
     int right;
 };
-
 #endif // COMMON_H

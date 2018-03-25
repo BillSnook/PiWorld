@@ -103,7 +103,6 @@ void MainWindow::sliderSetup() {
     ui->m3Slider->setRange( 0, SLIDER_RESOLUTION );
     ui->m3Slider->show();
     connect(ui->m3Slider, SIGNAL (valueChanged(int)), this, SLOT (sliderChanged3(int)));
-
 }
 
 void MainWindow::sliderChanged0(int newValue) {
@@ -435,7 +434,7 @@ void MainWindow::tb2(bool checked) {
 
 void MainWindow::tb3(bool checked) {
 
-//    fprintf(stderr,"tb3, s0: %d, s1: %d, s2: %d\n", slider[0], slider[1], slider[2]);
+    fprintf(stderr,"tb3\n");
     if ( ! running ) {
         running = true;
         hw->setMtrDirSpd( 0, 1, 0);
