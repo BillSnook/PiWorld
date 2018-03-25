@@ -23,8 +23,8 @@ HEADERS  += mainwindow.h \
             commpi.h \
 #            motor.h \
             hardware.h \
-    common.h
+            common.h
 
 FORMS    += mainwindow.ui
 
-#LIBS    = -lwiringPi
+LIBS    = -lwiringPi

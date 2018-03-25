@@ -74,7 +74,7 @@ int I2C::i2cWriteReg8(int reg, int data) {
 int I2C::i2cWriteReg16(int reg, int data) {
 
 #ifdef USE_HARDWARE
-    wiringPiI2CWriteReg16(device, reg, data);
+    return wiringPiI2CWriteReg16(device, reg, data);
 #else
     return reg + data;
 #endif  // USE_HARDWARE
@@ -96,13 +96,13 @@ PWM::PWM( int addr ) {
     delay( 1 );                         // Millisecond to let oscillator setup
 #endif  // USE_HARDWARE
 
-    int mode1 = i2c->i2cRead( MODE1 );
-    mode1 = mode1 & ~SLEEP;             // Turn off sleep - wake up
-    i2c->i2cWrite( MODE1, mode1 );
+//    int mode1 = i2c->i2cRead( MODE1 );
+//    mode1 = mode1 & ~SLEEP;             // Turn off sleep - wake up
+//    i2c->i2cWrite( MODE1, mode1 );
 
-#ifdef USE_HARDWARE
-    delay( 1 );                         // Millisecond to let oscillator stabileize
-#endif  // USE_HARDWARE
+//#ifdef USE_HARDWARE
+//    delay( 1 );                         // Millisecond to let oscillator stabileize
+//#endif  // USE_HARDWARE
 
 
 }
@@ -113,20 +113,36 @@ void PWM::setPWMFrequency( int freq ) {
     prescaleval /= PWM_RESOLUTION;          // 12-bit
     prescaleval /= float( freq );
     prescaleval -= 1.0;                     // For averaging
-
-    prescaleval -= 1.0;
     float prescale = floor(prescaleval + 0.5);
+    fprintf( stderr, "prescaleval: %d, prescale: %f\n", prescaleval, prescale );
+    int prescaleSetting = int(floor(prescale));
+    if ( prescaleSetting < 3 ) {
+        prescaleSetting = 3;
+    }
 
     int oldmode = i2c->i2cRead( MODE1 );
     int newmode = ( oldmode & 0x7F ) | SLEEP;  // sleep
     i2c->i2cWrite( MODE1, newmode );             // go to sleep
-    i2c->i2cWrite( PRESCALE, int(floor(prescale)) );
+    i2c->i2cWrite( PRESCALE, prescaleSetting );
     i2c->i2cWrite( MODE1, oldmode );
 
+#ifdef USE_HARDWARE
+    delay( 1 );                         // Millisecond to let oscillator stabileize
+#endif  // USE_HARDWARE
 }
 
 void PWM::setPWM( int channel, int on, int off ) {
 
+    if ( ( channel < 0 ) || ( channel > 15 ) ) {
+        fprintf(stderr,"ERROR: PWM:setPWM channel: %d; should be 0 <= channel <= 15\n", channel);
+        return;
+    }
+    if ( ( on < 0 ) || ( on > PWM_COUNT ) || ( off < 0 ) || ( off > PWM_COUNT ) ) {
+        fprintf(stderr,"ERROR: PWM:setPWM%d on: %d, off: %d; should be 0 <= on or off <= %d (PWM_COUNT)\n", channel, on, off, PWM_COUNT);
+        return;
+    }
+
+    fprintf(stderr,"PWM:setPWM%d on: %04X, off: %04X\n", channel, on, off);
     i2c->i2cWrite( CHANNEL0_ON_L + (4 * channel), on & 0xFF );
     i2c->i2cWrite( CHANNEL0_ON_H + (4 * channel), on >> 8 );
     i2c->i2cWrite( CHANNEL0_OFF_L + (4 * channel), off & 0xFF );
@@ -135,6 +151,10 @@ void PWM::setPWM( int channel, int on, int off ) {
 
 void PWM::setPWMAll( int on, int off ) {
 
+    if ( ( on < 0 ) || ( on > PWM_COUNT ) || ( off < 0 ) || ( off > PWM_COUNT ) ) {
+        fprintf(stderr,"ERROR: PWM:setPWMAll on: %d, off: %d; should be 0 <= on or off <= %d (PWM_COUNT)\n", on, off, PWM_COUNT);
+        return;
+    }
     i2c->i2cWrite( ALLCHANNEL_ON_L, on & 0xFF );
     i2c->i2cWrite( AllCHANNEL_ON_H, on >> 8 );
     i2c->i2cWrite( ALLCHANNEL_OFF_L, off & 0xFF );
@@ -157,7 +177,8 @@ int PWM::getPWMResolution() {
 
 hardware::hardware() {
 
-    motorsSetup = false;
+    motor0Setup = false;
+    motor1Setup = false;
 
 #ifdef USE_HARDWARE
     int setupResult = wiringPiSetup();
@@ -171,25 +192,26 @@ hardware::hardware() {
     pwm = new PWM( 0x6F );          // Default for Motor Hat PWM chip
     pwm->setPWMFrequency( 1600 );
 
+    fprintf( stderr, "Speed adjustment: %d\n", SPEED_ADJUSTMENT );
 }
 
 bool hardware::setupForDCMotors() {
 
-    motorsSetup = true;
-    return motorsSetup;
+    return true;
 }
 
 bool hardware::resetForDCMotors() {
 
+    setPWM( M0En, 0 );
+    setPin( M0Fw, 0 );
+    setPin( M0Rv, 0 );
     setPWM( M1En, 0 );
     setPin( M1Fw, 0 );
     setPin( M1Rv, 0 );
-    setPWM( M2En, 0 );
-    setPin( M2Fw, 0 );
-    setPin( M2Rv, 0 );
 
-    motorsSetup = false;
-    return motorsSetup;
+    motor0Setup = false;
+    motor1Setup = false;
+    return true;
 }
 
 void hardware::setPin( int pin, int value ) {
@@ -207,7 +229,15 @@ void hardware::setPin( int pin, int value ) {
 
 void hardware::setPWM( int pin, int value ) {
 
-    pwm->setPWM( pin, value, PWM_COUNT - value );
+    if ( ( pin < 0 ) || ( pin > 15 ) ) {
+        fprintf(stderr,"ERROR: hardware:setPWM pin: %d; should be 0 <= pin <= 15\n", pin);
+        return;
+    }
+    if ( ( value < 0 ) || ( value > PWM_COUNT ) ) {
+        fprintf(stderr,"ERROR: hardware::setPWM value: %d\n", value);
+        return;
+    }
+    pwm->setPWM( pin, 0, value );
 }
 
 //DCM hardware::getMotor( int motor ) {
@@ -219,7 +249,22 @@ void hardware::setPWM( int pin, int value ) {
 
 void hardware::setMtrDirSpd(int motor, int direction , int speed) {
 
-    fprintf(stderr,"setMtrDirSpd m %d, d: %s, s: %d\n", motor, direction ? "f" : "r", speed);
+    if ( ( speed < 0 ) || ( speed > (PWM_COUNT / SPEED_ADJUSTMENT) ) ) {
+        fprintf(stderr,"ERROR: hardware::setMtrDirSpd speed: %d\n", speed);
+        return;
+    }
+    fprintf(stderr,"setMtrDirSpd m%d, d: %s, speed: %d\n", motor, direction ? "f" : "r", speed);
+    if ( motor == 0 ) {
+        if ( direction == 1 ) {
+            setPin( M0Fw, 1 );
+            setPin( M0Rv, 0 );
+        } else {
+            setPin( M0Fw, 0 );
+            setPin( M0Rv, 1 );
+        }
+        motor0Setup = true;
+        setPWM( M0En, speed * SPEED_ADJUSTMENT );
+    }
     if ( motor == 1 ) {
         if ( direction == 1 ) {
             setPin( M1Fw, 1 );
@@ -228,28 +273,19 @@ void hardware::setMtrDirSpd(int motor, int direction , int speed) {
             setPin( M1Fw, 0 );
             setPin( M1Rv, 1 );
         }
+        motor1Setup = true;
         setPWM( M1En, speed * SPEED_ADJUSTMENT );
-    }
-    if ( motor == 2 ) {
-        if ( direction == 1 ) {
-            setPin( M2Fw, 1 );
-            setPin( M2Rv, 0 );
-        } else {
-            setPin( M2Fw, 0 );
-            setPin( M2Rv, 1 );
-        }
-        setPWM( M2En, speed * SPEED_ADJUSTMENT );
     }
 }
 
 void hardware::setMtrSpd(int motor, int speed) {
 
-    fprintf(stderr,"setMtrSpd m %d, s: %d\n", motor, speed);
-    if ( motor == 1 ) {
-        setPWM( M1En, speed * SPEED_ADJUSTMENT );
+    fprintf(stderr,"setMtrSpd m%d, speed: %d\n", motor, speed);
+    if ( ( motor == 0 ) && motor0Setup ) {
+        setPWM( M0En, speed * SPEED_ADJUSTMENT );
     }
-    if ( motor == 2 ) {
-        setPWM( M2En, speed * SPEED_ADJUSTMENT );
+    if ( ( motor == 1 ) && motor1Setup ) {
+        setPWM( M1En, speed * SPEED_ADJUSTMENT );
     }
 }
 

@@ -107,7 +107,7 @@
        <string>Stop</string>
       </property>
      </widget>
-     <widget class="QSlider" name="m1Slider">
+     <widget class="QSlider" name="m0Slider">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -120,7 +120,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="m2Slider">
+     <widget class="QSlider" name="m1Slider">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -133,7 +133,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="m3Slider">
+     <widget class="QSlider" name="m2Slider">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -146,7 +146,7 @@
        <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-     <widget class="QSlider" name="m4Slider">
+     <widget class="QSlider" name="m3Slider">
       <property name="geometry">
        <rect>
         <x>150</x>
@@ -211,6 +211,58 @@
        <string>Stop</string>
       </property>
      </widget>
+     <widget class="QPushButton" name="testButton0">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>330</y>
+        <width>91</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Start</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="testButton1">
+      <property name="geometry">
+       <rect>
+        <x>170</x>
+        <y>330</y>
+        <width>91</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Stop</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="testButton2">
+      <property name="geometry">
+       <rect>
+        <x>320</x>
+        <y>330</y>
+        <width>91</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Accept</string>
+      </property>
+     </widget>
+     <widget class="QPushButton" name="testButton3">
+      <property name="geometry">
+       <rect>
+        <x>470</x>
+        <y>330</y>
+        <width>91</width>
+        <height>29</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Finish</string>
+      </property>
+     </widget>
     </widget>
    </widget>
    <widget class="QScrollArea" name="connectBox">
@@ -269,7 +321,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>22</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuPiWorld">
@@ -302,7 +354,7 @@
    <property name="text">
     <string>Motor Test</string>
    </property>
-   <property name="shortcutVisibleInContextMenu">
+   <property name="shortcutVisibleInContextMenu" stdset="0">
     <bool>false</bool>
    </property>
   </action>

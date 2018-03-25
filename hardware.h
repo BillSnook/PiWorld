@@ -2,7 +2,7 @@
 #define HARDWARE_H
 
 
-//#define USE_HARDWARE
+#define USE_HARDWARE
 
 
 #include "common.h"
@@ -65,21 +65,21 @@ class PWM {
 
 
 // Address of PWM channels - Fw and Rv expect their on and off values to be 0 to PWM_MAX
-#define M1Fw                    9       // Motor 1 Forward enable PWM channel
-#define M1Rv                    10      // Motor 1 Reverse enable - both 0 is safe off
-#define M1En                    8       // Motor 1 enable, values from 0 to PWM_MAX
+#define M0Fw                    9       // Motor 1 Forward enable PWM channel
+#define M0Rv                    10      // Motor 1 Reverse enable - both 0 is safe off
+#define M0En                    8       // Motor 1 enable, values from 0 to PWM_MAX
 
-#define M2Fw                    11
-#define M2Rv                    12
-#define M2En                    13
+#define M1Fw                    11
+#define M1Rv                    12
+#define M1En                    13
 
-#define M3Fw                    4
-#define M3Rv                    3
-#define M3En                    2
+#define M2Fw                    4
+#define M2Rv                    3
+#define M2En                    2
 
-#define M4Fw                    5
-#define M4Rv                    6
-#define M4En                    7
+#define M3Fw                    5
+#define M3Rv                    6
+#define M3En                    7
 
 
 public:
@@ -114,7 +114,9 @@ public:
     I2C     *i2c;
     PWM     *pwm;
 
-    bool    motorsSetup;
+    bool    motor0Setup;
+    bool    motor1Setup;
+
     int     i2cAddress;
     int     i2cFrequency;
 
