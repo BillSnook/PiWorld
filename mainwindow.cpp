@@ -18,13 +18,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->talkBox->hide();
 
     buttonSetup();
-    running = false;
-
-    // Eventually we will get these from a file
-    for ( int i = 0; i < SPEED_ARRAY; i++ ) {
-        speed[i].left = 0;
-        speed[i].right = 0;
-    }
 
     slotMotorMenu();    // Or slotCommMenu(); // if we want to start with that as defaulthowSpeed
 }
@@ -203,6 +196,10 @@ void MainWindow::slotMotorMenu() {
     ui->testButton2->show();
     ui->testButton3->show();
 
+    running = false;
+
+    readSpeed();
+
     slider[0] = speed[0].left;
     slider[1] = speed[0].right;
     slider[2] = 0;
@@ -210,7 +207,6 @@ void MainWindow::slotMotorMenu() {
 
     sliderSetup();
 
-    readSpeed();
 }
 
 // MARK: Button actions
@@ -456,8 +452,16 @@ void MainWindow::saveSpeed() {
 void MainWindow::readSpeed() {
 
     fprintf(stderr,"readSpeed\n");
+
     filer *fi = new filer();
-    fi->readData( &speed[0] );
+    if ( fi->readData( &speed[0] ) ) {  // If saved speed is read from file
+        showSpeed();
+    } else {                            // Else initialize to zeros
+        for ( int i = 0; i < SPEED_ARRAY; i++ ) {
+            speed[i].left = 0;
+            speed[i].right = 0;
+        }
+    }
     delete fi;
 }
 

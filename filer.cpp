@@ -24,7 +24,7 @@ void filer::saveData( speed_array *spd ) {
     }
 }
 
-void filer::readData( speed_array *spd ) {
+bool filer::readData( speed_array *spd ) {
 
     FILE *fp;
 
@@ -32,7 +32,8 @@ void filer::readData( speed_array *spd ) {
     if ( NULL != fp ) {
         fread( spd, sizeof( speed_array), SPEED_ARRAY, fp );
         fclose(fp);
-    } else {
-        fprintf(stderr,"readData failed opening file\n");
+        return true;
     }
+    fprintf(stderr,"readData failed opening file\n");
+    return false;
 }
