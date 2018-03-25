@@ -17,14 +17,16 @@ SOURCES += main.cpp\
             mainwindow.cpp \
             commpi.cpp \
 #            motor.cpp \
-            hardware.cpp
+            hardware.cpp \
+            filer.cpp
 
 HEADERS  += mainwindow.h \
             commpi.h \
 #            motor.h \
             hardware.h \
-            common.h
+            common.h \
+            filer.h
 
 FORMS    += mainwindow.ui
 
-LIBS    = -lwiringPi
+#LIBS    = -lwiringPi

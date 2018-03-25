@@ -2,7 +2,7 @@
 #define HARDWARE_H
 
 
-#define USE_HARDWARE
+//#define USE_HARDWARE
 
 
 #include "common.h"

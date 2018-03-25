@@ -3,6 +3,7 @@
 
 #include "commpi.h"
 #include "hardware.h"
+#include "filer.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -208,6 +209,8 @@ void MainWindow::slotMotorMenu() {
     slider[3] = 0;
 
     sliderSetup();
+
+    readSpeed();
 }
 
 // MARK: Button actions
@@ -400,9 +403,7 @@ void MainWindow::b3r(bool checked) {
 
     if (motorMode) {
         ui->stopButton->setChecked(false);
-        if ( slider[3] < SLIDER_RESOLUTION ) {
-            ui->m3Slider->setValue( slider[3] + 1 );
-        }
+        saveSpeed();
     }
 }
 
@@ -443,6 +444,23 @@ void MainWindow::tb3(bool checked) {
     hw->setMtrDirSpd( 0, 0, speed[slider[2]].left );
     hw->setMtrDirSpd( 1, 0, speed[slider[2]].right );
 }
+
+void MainWindow::saveSpeed() {
+
+    fprintf(stderr,"saveSpeed\n");
+    filer *fi = new filer();
+    fi->saveData( &speed[0] );
+    delete fi;
+}
+
+void MainWindow::readSpeed() {
+
+    fprintf(stderr,"readSpeed\n");
+    filer *fi = new filer();
+    fi->readData( &speed[0] );
+    delete fi;
+}
+
 void MainWindow::showSpeed() {
 
     fprintf(stderr,"showSpeed\n");

@@ -6,6 +6,7 @@
 
 class commPi;
 class hardware;
+class filer;
 
 namespace Ui {
 class MainWindow;
@@ -23,6 +24,7 @@ private:
     Ui::MainWindow  *ui;
     commPi          *piPtr;
     hardware        *hw = nullptr;
+//    filer           *fi;
 
     bool connected;
     bool commMode;
@@ -63,6 +65,8 @@ private slots:
     void tb2(bool checked);
     void tb3(bool checked);
 
+    void saveSpeed();
+    void readSpeed();
     void showSpeed();
 
 };
