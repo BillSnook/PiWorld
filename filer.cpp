@@ -15,7 +15,7 @@ void filer::saveData( speed_array *spd ) {
 
     FILE *fp;
 
-    fp = fopen("/tmp/test.bin", "wb");
+    fp = fopen( SPEED_FILE_NAME, "wb" );
     if ( NULL != fp ) {
         fwrite( spd, sizeof( speed_array), SPEED_ARRAY, fp );
         fclose(fp);
@@ -28,7 +28,7 @@ bool filer::readData( speed_array *spd ) {
 
     FILE *fp;
 
-    fp = fopen("/tmp/test.bin", "rb");
+    fp = fopen( SPEED_FILE_NAME, "rb" );
     if ( NULL != fp ) {
         fread( spd, sizeof( speed_array), SPEED_ARRAY, fp );
         fclose(fp);

@@ -344,9 +344,7 @@ void MainWindow::b3l(bool checked) {
     }
     if (motorMode) {
         ui->stopButton->setChecked(false);
-        if ( slider[3] > 0 ) {
-            ui->m3Slider->setValue( slider[3] - 1 );
-        }
+        readSpeed();
     }
 }
 
@@ -468,7 +466,7 @@ void MainWindow::readSpeed() {
 void MainWindow::showSpeed() {
 
     fprintf(stderr,"showSpeed\n");
-    for ( int i = 0; i < 4; i++ ) {
+    for ( int i = 0; i < 8; i++ ) {
         fprintf(stderr,"%d l: %d, r: %d\n", i, speed[i].left, speed[i].right);
     }
 }

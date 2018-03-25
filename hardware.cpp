@@ -96,15 +96,6 @@ PWM::PWM( int addr ) {
     delay( 1 );                         // Millisecond to let oscillator setup
 #endif  // USE_HARDWARE
 
-//    int mode1 = i2c->i2cRead( MODE1 );
-//    mode1 = mode1 & ~SLEEP;             // Turn off sleep - wake up
-//    i2c->i2cWrite( MODE1, mode1 );
-
-//#ifdef USE_HARDWARE
-//    delay( 1 );                         // Millisecond to let oscillator stabileize
-//#endif  // USE_HARDWARE
-
-
 }
 
 void PWM::setPWMFrequency( int freq ) {
@@ -142,7 +133,7 @@ void PWM::setPWM( int channel, int on, int off ) {
         return;
     }
 
-    fprintf(stderr,"PWM:setPWM%d on: %04X, off: %04X\n", channel, on, off);
+//    fprintf(stderr,"PWM:setPWM%d on: %04X, off: %04X\n", channel, on, off);
     i2c->i2cWrite( CHANNEL0_ON_L + (4 * channel), on & 0xFF );
     i2c->i2cWrite( CHANNEL0_ON_H + (4 * channel), on >> 8 );
     i2c->i2cWrite( CHANNEL0_OFF_L + (4 * channel), off & 0xFF );
