@@ -2,18 +2,21 @@
 #define HARDWARE_H
 
 
-//#define USE_HARDWARE
-
-
 #include "common.h"
 
-#ifdef USE_HARDWARE
+#ifdef ON_PI
 
 #include <wiringPi.h>
 #include <linux/i2c-dev.h>
 #include <wiringPiI2C.h>
 
-#endif  // USE_HARDWARE
+#define SPEED_FILE_NAME         "/home/pi/code/qt/speed.bin"
+
+#else   // ON_PI
+
+#define SPEED_FILE_NAME         "/Users/bill/Code/RaspberryPi/speed.bin"
+
+#endif  // ON_PI
 
 
 class I2C {

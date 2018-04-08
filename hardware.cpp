@@ -14,70 +14,70 @@ I2C::I2C(int addr) {
     debug = false;
     address = addr;
 
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     device = wiringPiI2CSetup( addr );
-#endif  // USE_HARDWARE
+#endif  // ON_PI
 }
 
 int I2C::i2cRead(int reg) {
 
     int rdValue = 0;
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     rdValue = wiringPiI2CReadReg8 ( device, reg ) ;	// Read 8 bits from register reg on device
 #else
     rdValue = reg;
-#endif  // USE_HARDWARE
+#endif  // ON_PI
     return rdValue;
 }
 
 int I2C::i2cReadReg8(int reg) {
 
     int rdValue = 0;
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     rdValue = wiringPiI2CReadReg8 ( device, reg ) ;	// Read 8 bits from register reg on device
 #else
     rdValue = reg;
-#endif  // USE_HARDWARE
+#endif  // ON_PI
     return rdValue;
 }
 
 int I2C::i2cReadReg16(int reg) {
 
     int rdValue = 0;
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     rdValue = wiringPiI2CReadReg16 ( device, reg ) ;	// Read 16 bits from register reg on device
 #else
     rdValue = reg;
-#endif  // USE_HARDWARE
+#endif  // ON_PI
     return rdValue;
 }
 
 
 int I2C::i2cWrite(int reg, int data) {
 
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     return wiringPiI2CWriteReg8(device, reg, data);
 #else
     return reg + data;
-#endif  // USE_HARDWARE
+#endif  // ON_PI
 }
 
 int I2C::i2cWriteReg8(int reg, int data) {
 
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     return wiringPiI2CWriteReg8(device, reg, data);
 #else
     return reg + data;
-#endif  // USE_HARDWARE
+#endif  // ON_PI
 }
 
 int I2C::i2cWriteReg16(int reg, int data) {
 
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     return wiringPiI2CWriteReg16(device, reg, data);
 #else
     return reg + data;
-#endif  // USE_HARDWARE
+#endif  // ON_PI
 }
 
 
@@ -92,9 +92,9 @@ PWM::PWM( int addr ) {
     i2c->i2cWrite( CHANNEL0_OFF_L, 0 );
     i2c->i2cWrite( CHANNEL0_OFF_H, 0 );
 
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     delay( 1 );                         // Millisecond to let oscillator setup
-#endif  // USE_HARDWARE
+#endif  // ON_PI
 
 }
 
@@ -117,9 +117,9 @@ void PWM::setPWMFrequency( int freq ) {
     i2c->i2cWrite( PRESCALE, prescaleSetting );
     i2c->i2cWrite( MODE1, oldmode );
 
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     delay( 1 );                         // Millisecond to let oscillator stabileize
-#endif  // USE_HARDWARE
+#endif  // ON_PI
 }
 
 void PWM::setPWM( int channel, int on, int off ) {
@@ -171,14 +171,14 @@ hardware::hardware() {
     motor0Setup = false;
     motor1Setup = false;
 
-#ifdef USE_HARDWARE
+#ifdef ON_PI
     int setupResult = wiringPiSetup();
     if ( setupResult == -1 ) {
         fprintf( stderr, "Error setting up wiringPi." );
         return;
     }
     fprintf( stderr, "Pi version: %d\n", setupResult );
-#endif  // USE_HARDWARE
+#endif  // ON_PI
 
     pwm = new PWM( 0x6F );          // Default for Motor Hat PWM chip
     pwm->setPWMFrequency( 1600 );

@@ -4,6 +4,7 @@
 
 #include "filer.h"
 #include "mainwindow.h"
+#include "hardware.h"
 
 using namespace std;
 

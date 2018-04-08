@@ -12,8 +12,6 @@
 
 #define SPEED_ARRAY             16      // Number of distinct speeds we can select
 
-#define SPEED_FILE_NAME         "/home/pi/code/qt/speed.bin"
-
 struct speed_array {
 //    speed_array() {};
     int left;

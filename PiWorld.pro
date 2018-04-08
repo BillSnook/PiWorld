@@ -29,4 +29,5 @@ HEADERS  += mainwindow.h \
 
 FORMS    += mainwindow.ui
 
+#DEFINES += ON_PI
 #LIBS    = -lwiringPi

@@ -12,6 +12,16 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     setFixedSize(600, 500);
 
+#ifdef  ON_PI
+
+    fprintf(stderr,"ON_PI is defined");
+
+#else
+
+    fprintf(stderr,"ON_PI is not defined");
+
+#endif  // ON_PI
+
     menuSetup();
 
     ui->connectBox->hide();
